@@ -183,11 +183,21 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onNavigate }) => {
                           <span className="font-mono text-[10px] text-brand-ink-muted block">
                             Email: {u.email}
                           </span>
+                          {u.paymentStatus === "pending" && u.paymentNotified === true && (
+                            <span className="inline-block bg-[#c8442f] text-white px-2 py-0.5 mt-1 rounded text-[8px] font-mono font-bold uppercase animate-pulse shadow-sm">
+                              🔔 RECLAMA TRANSFERENCIA
+                            </span>
+                          )}
                         </div>
                       </div>
                       
-                      <div className="mt-2 text-xs font-mono">
-                        📞 Cel: <a href={whatsappMsgUrl} target="_blank" rel="noopener noreferrer" className="font-bold underline text-brand-win hover:text-brand-win/80">{u.whatsapp}</a>
+                      <div className="mt-2 text-xs font-mono flex items-center justify-between">
+                        <span>📞 Cel: <a href={whatsappMsgUrl} target="_blank" rel="noopener noreferrer" className="font-bold underline text-brand-win hover:text-brand-win/80">{u.whatsapp}</a></span>
+                        {u.paymentNotified === true && u.paymentNotifiedAt && (
+                          <span className="text-[9px] font-mono text-brand-ink-muted opacity-80 pl-2">
+                            ⏱️ Avisó: {new Date(u.paymentNotifiedAt).toLocaleDateString('es-AR', {day: 'numeric', month: 'short'})} a las {new Date(u.paymentNotifiedAt).toLocaleTimeString('es-AR', {hour: '2-digit', minute:'2-digit'})}
+                          </span>
+                        )}
                       </div>
                     </div>
 

@@ -9,7 +9,7 @@ interface PendingPaymentProps {
 export const PendingPayment: React.FC<PendingPaymentProps> = ({ onNavigate }) => {
   const { user, logout, updateLocalUserProfile } = useAuth();
   const [copied, setCopied] = useState(false);
-  const [notified, setNotified] = useState(false);
+  const [notified, setNotified] = useState(user.paymentNotified === true);
 
   if (!user) return null;
 
@@ -20,9 +20,10 @@ export const PendingPayment: React.FC<PendingPaymentProps> = ({ onNavigate }) =>
   };
 
   const handleConfirmNotification = () => {
-    // Simulated background notification to admin. In local, we set a flag.
+    // Persist real background notification flag to Cloud Firestore/Local Storage
     updateLocalUserProfile({
-      whatsapp: user.whatsapp // ensures we persist local state
+      paymentNotified: true,
+      paymentNotifiedAt: new Date().toISOString()
     });
     setNotified(true);
   };
