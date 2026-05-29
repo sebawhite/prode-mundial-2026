@@ -1,3 +1,5 @@
+import worldcupData from '../../public/worldcup.json';
+
 export interface Team {
   code: string;
   name: string;
@@ -104,51 +106,102 @@ export const GROUPS: Record<string, string[]> = {
   L: ["ENG", "CRO", "GHA", "PAN"]
 };
 
-// Generate Group stage matches: Each plays each other in group.
-// 12 groups, 6 matches per group = 72 matches.
+// Helper lookup functions for mapping worldcup.json
+const findTeamByName = (name: string): Team => {
+  const cleaned = name.trim().toLowerCase();
+  const found = Object.values(TEAMS).find(t => t.name.toLowerCase() === cleaned);
+  if (found) return found;
+  
+  // Custom checks for team names that might differ slightly:
+  if (cleaned.includes("bosnia")) return TEAMS.BIH;
+  if (cleaned.includes("marfil")) return TEAMS.CIV;
+  if (cleaned.includes("congo")) return TEAMS.COD;
+  if (cleaned.includes("estados unidos") || cleaned === "usa") return TEAMS.USA;
+  if (cleaned.includes("curazao") || cleaned.includes("curacao")) return TEAMS.CUW;
+  if (cleaned.includes("países bajos") || cleaned.includes("paises bajos") || cleaned === "netherlands") return TEAMS.NED;
+  if (cleaned.includes("arabia")) return TEAMS.KSA;
+  if (cleaned.includes("zelanda")) return TEAMS.NZL;
+  if (cleaned.includes("checa")) return TEAMS.CZE;
+  if (cleaned.includes("cabo verde")) return TEAMS.CPV;
+  if (cleaned.includes("corea")) return TEAMS.KOR;
+  if (cleaned.includes("sudáfrica")) return TEAMS.RSA;
+  
+  return {
+    code: name.substring(0, 3).toUpperCase(),
+    name,
+    flag: "🏳️",
+    placeholder: true
+  };
+};
+
+function parseMatchDate(dateStr: string, timeStr?: string): string {
+  try {
+    if (timeStr) {
+      const timeClean = timeStr.replace(/UTC/i, "").trim();
+      const combined = `${dateStr}T${timeClean}`;
+      const d = new Date(combined);
+      if (!isNaN(d.getTime())) {
+        return d.toISOString();
+      }
+    }
+    const fallbackD = new Date(dateStr);
+    if (!isNaN(fallbackD.getTime())) {
+      return fallbackD.toISOString();
+    }
+  } catch (e) {
+    // Fallback
+  }
+  return new Date("2026-06-11T12:00:00Z").toISOString();
+}
+
+// Generate Group stage matches from official public/worldcup.json
 export const generateGroupMatches = (): Match[] => {
   const matches: Match[] = [];
-  let idCounter = 1;
-  const venues = [
-    "Azteca, CDMX", "MetLife, NY", "SoFi, LA", "BC Place, Vancouver",
-    "Mercedes-Benz, Atlanta", "Hard Rock, Miami", "Gillette, Boston",
-    "AT&T, Dallas", "Arrowhead, KC", "NRG, Houston", "Lincoln Financial, Philly",
-    "Levi's, SF", "Lumen Field, Seattle", "Akron, Guadalajara", "BBVA, Monterrey"
-  ];
-
-  Object.entries(GROUPS).forEach(([groupName, teams]) => {
-    const pairings = [
-      [0, 1, 1], // Team 1 vs 2, day 1
-      [2, 3, 1], // Team 3 vs 4, day 1
-      [0, 2, 2], // Team 1 vs 3, day 2
-      [1, 3, 2], // Team 2 vs 4, day 2
-      [3, 0, 3], // Team 4 vs 1, day 3
-      [1, 2, 3]  // Team 2 vs 3, day 3
-    ];
-
-    pairings.forEach(([t1Idx, t2Idx, mday]) => {
-      const matchId = `match-${idCounter}`;
-      // Group stage matches run from June 11 to June 27, 2026
-      const baseDate = new Date("2026-06-11T12:00:00Z");
-      baseDate.setDate(baseDate.getDate() + (idCounter % 16)); // Stagger dates between June 11 and 27
-      baseDate.setHours(12 + (idCounter % 3) * 4); // 12:00, 16:00, 20:00
-
-      matches.push({
-        id: matchId,
-        stage: "groups",
-        group: groupName,
-        matchday: mday,
-        date: baseDate.toISOString(),
-        homeTeam: TEAMS[teams[t1Idx]],
-        awayTeam: TEAMS[teams[t2Idx]],
-        homeScore: null,
-        awayScore: null,
-        isFinished: false,
-        venue: venues[idCounter % venues.length]
-      });
-      idCounter++;
+  
+  // Filter only matches that belong to a group stage (Group A to L)
+  const groupMatchesData = worldcupData.matches.filter((item: any) => {
+    return item.group && /Group/i.test(item.group);
+  });
+  
+  groupMatchesData.forEach((item: any, idx: number) => {
+    const matchId = `match-${idx + 1}`;
+    
+    // Parse Group Letter (e.g. "Group A" -> "A")
+    let groupLetter = "A";
+    if (item.group) {
+      const groupMatch = item.group.match(/Group\s+([A-L])/i);
+      if (groupMatch) {
+        groupLetter = groupMatch[1];
+      }
+    }
+    
+    // Parse Matchday
+    let matchday = 1;
+    if (item.round) {
+      const mdayMatch = item.round.match(/Matchday\s+(\d+)/i);
+      if (mdayMatch) {
+        matchday = parseInt(mdayMatch[1], 10);
+      }
+    }
+    
+    const homeTeam = findTeamByName(item.team1);
+    const awayTeam = findTeamByName(item.team2);
+    
+    matches.push({
+      id: matchId,
+      stage: "groups",
+      group: groupLetter,
+      matchday: matchday,
+      date: parseMatchDate(item.date, item.time),
+      homeTeam,
+      awayTeam,
+      homeScore: null,
+      awayScore: null,
+      isFinished: false,
+      venue: item.ground || "Estadio Mundial 2026"
     });
   });
+  
   return matches;
 };
 
