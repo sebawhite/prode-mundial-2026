@@ -18,10 +18,15 @@ export const Welcome: React.FC<WelcomeProps> = ({ onNavigate }) => {
           Unite a nuestro círculo cerrado de amigos y familiares para predecir los 72 partidos de la fase de grupos del torneo más apasionante del mundo.
         </p>
 
-        <div className="bg-brand-bg/80 border-2 border-brand-ink p-3 rounded-md mb-4 text-left">
-          <p className="font-sans text-xs md:text-sm italic text-brand-ink-muted">
-            🏆 Organizado por <strong>Felix Blanco</strong>. 
-            El <strong>100%</strong> de lo recaudado por las inscripciones confirmadas se acumula íntegramente para ser repartido entre los ganadores del Top 3 final (1°: 60%, 2°: 25%, 3°: 15%). ¡Armá tu fixture y participá por todo el pozo acumulado!
+        <div className="bg-brand-bg/80 border-2 border-brand-ink p-3 rounded-md mb-4 text-left space-y-2">
+          <p className="font-sans text-xs md:text-sm text-brand-ink-muted">
+            🏆 Organizado por <strong>Felix Blanco</strong> con un fin doble: diversión competitiva y un propósito noble.
+          </p>
+          <p className="font-sans text-xs md:text-sm italic text-brand-ink-muted border-t border-brand-ink/10 pt-2">
+            🌍 <strong>50% Solidario:</strong> De cada inscripción de $6.000, <strong>$3.000 se donan de forma directa</strong> para comprar bancos de madera para la escuela <strong className="text-brand-blue font-bold">Wonderful School</strong> en Zanzíbar, Tanzania 🇹🇿.
+          </p>
+          <p className="font-sans text-xs md:text-sm italic text-brand-ink-muted border-t border-brand-ink/10 pt-2">
+            🎁 <strong>50% Pozo de Premios:</strong> Los restantes $3.000 se acumulan transparentemente para repartirse íntegramente entre el Top 3 final (1°: 60%, 2°: 25%, 3°: 15%).
           </p>
         </div>
 
@@ -31,8 +36,12 @@ export const Welcome: React.FC<WelcomeProps> = ({ onNavigate }) => {
             <span className="font-bold">6.000 Pesos</span>
           </div>
           <div className="flex justify-between">
+            <span>🌍 Causa Solidaria:</span>
+            <span className="font-bold text-brand-blue">50% Donación Zanzíbar 🇹🇿</span>
+          </div>
+          <div className="flex justify-between">
             <span>🏆 Reparto del Pozo:</span>
-            <span className="font-bold">1°: 60% | 2°: 25% | 3°: 15%</span>
+            <span className="font-bold">1°: 60% | 2°: 25% | 3°: 15% del restante 50%</span>
           </div>
           <div className="flex justify-between">
             <span>⏳ Cierre General:</span>
