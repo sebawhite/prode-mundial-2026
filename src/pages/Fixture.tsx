@@ -26,6 +26,7 @@ export const Fixture: React.FC<FixtureProps> = ({ onNavigate }) => {
   const [selectedGroup, setSelectedGroup] = useState<string>("all");
   const [selectedMatchday, setSelectedMatchday] = useState<number | string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [showRulesInfo, setShowRulesInfo] = useState(false);
   
   // Viewer mode states: lets user audit other players' predictions if deadline passed
   const [viewingUserId, setViewingUserId] = useState<string>(user?.uid || "");
@@ -150,21 +151,52 @@ export const Fixture: React.FC<FixtureProps> = ({ onNavigate }) => {
     <div className="max-w-4xl mx-auto py-4 px-4 space-y-6">
       
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-brand-card p-4 rounded-lg retro-border retro-shadow">
-        <div>
-          <h2 className="font-serif text-2xl font-bold text-brand-ink uppercase tracking-tight flex items-center gap-2">
-            ⚽ Pronosticar Partidos
-          </h2>
-          <p className="font-mono text-xs text-brand-ink-muted">
-            Arriesgá marcadores exactos. Un marcador exacto otorga 5 pts; diferencia 3 pts; resultado 1 pt.
-          </p>
+      <div className="flex flex-col bg-brand-card p-4 rounded-lg retro-border retro-shadow">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="flex-1">
+            <h2 className="font-serif text-2xl font-bold text-brand-ink uppercase tracking-tight flex items-center gap-2">
+              ⚽ Pronosticar Partidos
+            </h2>
+            <p className="font-mono text-xs text-brand-ink-muted">
+              Arriesgá marcadores exactos. Un marcador exacto otorga 5 pts; diferencia 3 pts; resultado 1 pt. 
+              <button 
+                onClick={() => setShowRulesInfo(!showRulesInfo)} 
+                className="underline cursor-pointer text-brand-accent hover:text-brand-accent/80 font-bold ml-1 font-mono uppercase text-[10px]"
+              >
+                {showRulesInfo ? "Cerrar" : "Ver más ➕"}
+              </button>
+            </p>
+          </div>
+          <button
+            onClick={() => onNavigate('home')}
+            className="bg-brand-bg text-brand-ink font-mono text-xs font-bold uppercase retro-border px-3 py-1.5 cursor-pointer hover:bg-brand-card shrink-0"
+          >
+            ← Volver
+          </button>
         </div>
-        <button
-          onClick={() => onNavigate('home')}
-          className="bg-brand-bg text-brand-ink font-mono text-xs font-bold uppercase retro-border px-3 py-1.5 cursor-pointer hover:bg-brand-card"
-        >
-          ← Volver
-        </button>
+
+        {showRulesInfo && (
+          <div className="mt-3 p-3 bg-brand-bg border-2 border-brand-ink text-xs font-mono text-brand-ink space-y-2 select-none rounded-none">
+            <p className="font-bold border-b border-brand-ink/15 pb-1 uppercase tracking-tight text-[#c8442f] text-[10px]">
+              🏆 TABLA DE PUNTUACIÓN DETALLADA
+            </p>
+            <ul className="space-y-2.5 leading-relaxed text-[11px]">
+              <li>
+                🥇 <strong>5 PTS • MARCADOR EXACTO:</strong> Le pegás a la cantidad de goles exacta de ambos equipos. 
+                <span className="block text-[10px] text-brand-ink-muted italic pl-4 mt-0.5">Ej: Pronóstico: 2-1 | Resultado: 2-1</span>
+              </li>
+              <li>
+                🥈 <strong>3 PTS • DIFERENCIA EXACTA:</strong> Acertás el ganador (o empate) y la distancia de goles entre ambos, pero con números diferentes.
+                <span className="block text-[10px] text-brand-ink-muted italic pl-4 mt-0.5">Ej: Pronóstico: 3-1 | Resultado: 2-0 (Diferencia de exactos +2 goles)</span>
+                <span className="block text-[10px] text-brand-ink-muted italic pl-4 mt-0.5">Ej: Pronóstico: 1-1 | Resultado: 2-2 (Empate, diferencia 0 goles)</span>
+              </li>
+              <li>
+                🥉 <strong>1 PT • RESULTADO (SIGNO):</strong> Acertás solo quién gana o que empatan, pero fallando en la diferencia de goles y marcador.
+                <span className="block text-[10px] text-brand-ink-muted italic pl-4 mt-0.5">Ej: Pronóstico: 3-1 | Resultado: 1-0 (Acertás ganador, pero fallás diferencia)</span>
+              </li>
+            </ul>
+          </div>
+        )}
       </div>
 
       {/* Viewing audited profiles panel */}
