@@ -19,6 +19,11 @@ service cloud.firestore {
       return request.time < timestamp.date(1782604740000);
     }
 
+    function isMatchUnfinished(matchId) {
+      let m = get(/databases/$(database)/documents/matches/$(matchId)).data;
+      return m.isFinished == false || m.isFinished == null;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }
@@ -67,12 +72,14 @@ service cloud.firestore {
       allow create: if isSignedIn() && 
                     incoming().userId == request.auth.uid && 
                     isValidPrediction(incoming()) && 
-                    isMatchActiveForPrediction(predictionId);
+                    isMatchActiveForPrediction(predictionId) &&
+                    isMatchUnfinished(incoming().matchId);
                     
       allow update: if isSignedIn() && 
                     existing().userId == request.auth.uid && 
                     isValidPrediction(incoming()) && 
                     isMatchActiveForPrediction(predictionId) && 
+                    isMatchUnfinished(existing().matchId) &&
                     incoming().diff(existing()).affectedKeys().hasOnly(['homeScore', 'awayScore', 'updatedAt']);
                     
       allow delete: if isAdmin();

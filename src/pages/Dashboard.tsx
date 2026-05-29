@@ -77,13 +77,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   const totalPredicted = userPredictions.length;
   const completionPercent = matches.length > 0 ? Math.round((totalPredicted / matches.length) * 100) : 0;
 
-  // Find next upcoming unplayed match
-  const nextMatch = matches.find(m => m.homeScore === null && m.awayScore === null) || matches[0];
+  // Find next upcoming unplayed match (skipping finished matches)
+  const nextMatch = matches.find(m => !m.isFinished && m.homeScore === null && m.awayScore === null) || matches.find(m => !m.isFinished) || matches[0];
   const nextPred = nextMatch 
     ? predictions.find(p => p.userId === user.uid && p.matchId === nextMatch.id) 
     : null;
 
-  const isEditable = nextMatch ? isBeforeDeadline(nextMatch.stage) : false;
+  const isEditable = nextMatch ? (isBeforeDeadline(nextMatch.stage) && !nextMatch.isFinished) : false;
 
   const handleHeroScoreChange = (team: "home" | "away", val: string) => {
     if (!nextMatch) return;

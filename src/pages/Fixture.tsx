@@ -318,7 +318,7 @@ export const Fixture: React.FC<FixtureProps> = ({ onNavigate }) => {
             // Validate if the match is locked for predictions
             const editOpen = isBeforeDeadline(m.stage);
             const isViewingSelf = viewingUserId === user.uid;
-            const canEdit = editOpen && isViewingSelf;
+            const canEdit = editOpen && isViewingSelf && !m.isFinished;
 
             const hasPred = pred.homeScore !== "" && pred.homeScore !== null && pred.awayScore !== "" && pred.awayScore !== null;
             const pointsEarned = isFinished && hasPred ? getPlayedPointsEarned(m, pred.homeScore, pred.awayScore) : 0;
@@ -358,7 +358,7 @@ export const Fixture: React.FC<FixtureProps> = ({ onNavigate }) => {
                   {/* Prediction input and real match status */}
                   <div className="flex flex-col items-center gap-1 justify-center shrink-0">
                     
-                    <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1">
                       {canEdit ? (
                         <>
                           <input
@@ -403,8 +403,8 @@ export const Fixture: React.FC<FixtureProps> = ({ onNavigate }) => {
                     )}
 
                     {!canEdit && (
-                      <span className="text-[8px] font-mono uppercase bg-brand-bg px-1.5 py-0.2 rounded text-brand-ink-muted tracking-tight">
-                        🔒 Cerrado
+                      <span className="text-[8px] font-mono uppercase bg-brand-bg px-1.5 py-0.5 rounded text-brand-ink-muted tracking-tight text-center max-w-[120px] leading-tight">
+                        {m.isFinished ? "🔒 Partido jugado — predicción bloqueada" : "🔒 Cerrado"}
                       </span>
                     )}
 
