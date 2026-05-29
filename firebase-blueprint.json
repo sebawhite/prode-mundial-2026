@@ -1,0 +1,113 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "User account details, payment status, and tournament stats",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Auth UID" },
+        "fullName": { "type": "string", "description": "User's full name (private to admin)" },
+        "nickname": { "type": "string", "description": "Public nickname displayed in ranking" },
+        "email": { "type": "string", "description": "User's authenticated email" },
+        "whatsapp": { "type": "string", "description": "WhatsApp contact number with country code" },
+        "photoURL": { "type": "string", "description": "Profile photo URL" },
+        "inviteCode": { "type": "string", "description": "The invitation code utilized to sign up" },
+        "paymentStatus": { "type": "string", "enum": ["pending", "confirmed", "rejected"], "description": "Status of the buy-in fee payment" },
+        "paymentConfirmedBy": { "type": "string", "description": "Admin UID who confirmed the deposit" },
+        "paymentConfirmedAt": { "type": "string", "format": "date-time", "description": "When payment was verified" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "isAdmin": { "type": "boolean" },
+        "totalPoints": { "type": "number", "description": "Total accumulated points" },
+        "completionPercent": { "type": "number", "description": "Percentage of matches predicted" },
+        "rank": { "type": "number", "description": "Static rank position in board" }
+      },
+      "required": ["uid", "fullName", "email", "paymentStatus", "createdAt"]
+    },
+    "Match": {
+      "title": "World Cup Match",
+      "description": "Scheduled matches and actual scores",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Primary match ID (match-1 to match-104)" },
+        "stage": { "type": "string", "enum": ["groups", "16avos", "8vos", "cuartos", "semis", "third_place", "final"] },
+        "group": { "type": "string", "description": "Group identifier if stage is 'groups' (A-L)" },
+        "matchday": { "type": "number" },
+        "date": { "type": "string", "format": "date-time" },
+        "homeTeam": { "type": "object" },
+        "awayTeam": { "type": "object" },
+        "homeScore": { "type": "number" },
+        "awayScore": { "type": "number" },
+        "isFinished": { "type": "boolean" },
+        "venue": { "type": "string" }
+      },
+      "required": ["id", "stage", "date", "homeTeam", "awayTeam", "isFinished"]
+    },
+    "Prediction": {
+      "title": "Match Prediction",
+      "description": "User prediction score for a single match",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Primary key format: userId_matchId" },
+        "userId": { "type": "string" },
+        "matchId": { "type": "string" },
+        "homeScore": { "type": "number" },
+        "awayScore": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "pointsEarned": { "type": "number" }
+      },
+      "required": ["id", "userId", "matchId", "homeScore", "awayScore"]
+    },
+    "Player": {
+      "title": "National Squad Player",
+      "description": "Footballer info used for Golden Boot and Golden Ball inputs",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "team": { "type": "string", "description": "National team country code (e.g., ARG)" },
+        "position": { "type": "string" },
+        "jerseyNumber": { "type": "number" }
+      },
+      "required": ["id", "name", "team"]
+    },
+    "Config": {
+      "title": "System Settings",
+      "description": "Deadlines, invite list, and economic properties",
+      "type": "object",
+      "properties": {
+        "groupStageDeadline": { "type": "string", "format": "date-time" },
+        "knockoutDeadline": { "type": "string", "format": "date-time" },
+        "buyInAmount": { "type": "number" },
+        "currency": { "type": "string" },
+        "paymentAlias": { "type": "string" },
+        "prizeDistribution": { "type": "object" },
+        "organizerCommission": { "type": "number" },
+        "inviteCodes": { "type": "array" }
+      },
+      "required": ["groupStageDeadline", "knockoutDeadline", "buyInAmount", "paymentAlias"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User Profiles container"
+    },
+    "/matches/{matchId}": {
+      "schema": { "$ref": "#/entities/Match" },
+      "description": "Match fixtures list"
+    },
+    "/predictions/{predictionId}": {
+      "schema": { "$ref": "#/entities/Prediction" },
+      "description": "User prediction record for a match"
+    },
+    "/players/{playerId}": {
+      "schema": { "$ref": "#/entities/Player" },
+      "description": "Squad team players list"
+    },
+    "/config/settings": {
+      "schema": { "$ref": "#/entities/Config" },
+      "description": "Global administration and deadline variables"
+    }
+  }
+}

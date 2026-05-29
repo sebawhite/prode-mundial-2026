@@ -1,0 +1,107 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global support helpers
+    function isSignedIn() { return request.auth != null; }
+    function isAdmin() { return isSignedIn() && (request.auth.token.email == 'sebahotelmkt@gmail.com' || request.auth.token.email == 'felixblancovolpe@gmail.com' || exists(/databases/$(database)/documents/admins/$(request.auth.uid))); }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+
+    // Deadline check (in UTC times)
+    // Cierre 1 (Groups & Specials): 10 June 2026 23:59 UTC = Epoch 1781135940 seconds (1781135940000 ms)
+    // Cierre 2 (Knockouts): 27 June 2026 23:59 UTC = Epoch 1782604740 seconds (1782604740000 ms)
+    function isBeforeGroupDeadline() {
+      return request.time < timestamp.fromMillis(1781135940000);
+    }
+    function isBeforeKnockoutDeadline() {
+      return request.time < timestamp.fromMillis(1782604740000);
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    match /admins/{adminId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /config/{settings} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /test/{document} {
+      allow read, write: if true;
+    }
+
+    match /players/{playerId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /matches/{matchId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /users/{userId} {
+      allow read: if isSignedIn(); 
+      allow create: if isSignedIn() && userId == request.auth.uid && isValidUserOnCreate(incoming());
+      allow update: if isSignedIn() && (
+        isAdmin() || 
+        (userId == request.auth.uid && 
+         incoming().diff(existing()).affectedKeys().hasOnly(['nickname', 'whatsapp', 'photoURL', 'completionPercent']) &&
+         isValidUserOnUpdate(incoming()))
+      );
+      allow delete: if isAdmin();
+    }
+
+    match /predictions/{predictionId} {
+      // Before groupStageDeadline: user can only fetch/read their own prediction.
+      // After groupStageDeadline: anyone can read if they are authenticated.
+      allow read: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid || !isBeforeGroupDeadline());
+      
+      allow create: if isSignedIn() && 
+                    incoming().userId == request.auth.uid && 
+                    isValidPrediction(incoming()) && 
+                    isMatchActiveForPrediction(incoming());
+                    
+      allow update: if isSignedIn() && 
+                    existing().userId == request.auth.uid && 
+                    isValidPrediction(incoming()) && 
+                    isMatchActiveForPrediction(existing()) && 
+                    incoming().diff(existing()).affectedKeys().hasOnly(['homeScore', 'awayScore', 'updatedAt']);
+                    
+      allow delete: if isAdmin();
+    }
+
+    function isValidUserOnCreate(data) {
+      return data.keys().hasAll(['fullName', 'email', 'paymentStatus', 'createdAt', 'uid']) &&
+             data.paymentStatus == 'pending' &&
+             data.fullName is string && data.fullName.size() >= 3 && data.fullName.size() <= 100 &&
+             data.email is string && data.email.size() >= 3 && data.email.size() <= 100 &&
+             data.uid == request.auth.uid;
+    }
+
+    function isValidUserOnUpdate(data) {
+      return (data.nickname == null || (data.nickname is string && data.nickname.size() <= 30)) &&
+             (data.whatsapp == null || (data.whatsapp is string && data.whatsapp.size() <= 30)) &&
+             (data.photoURL == null || (data.photoURL is string && data.photoURL.size() <= 1000));
+    }
+
+    function isValidPrediction(data) {
+      return data.keys().hasAll(['userId', 'matchId', 'homeScore', 'awayScore']) &&
+             data.homeScore is int && data.homeScore >= 0 && data.homeScore <= 20 &&
+             data.awayScore is int && data.awayScore >= 0 && data.awayScore <= 20;
+    }
+
+    function isMatchActiveForPrediction(data) {
+      return get(/databases/$(database)/documents/matches/$(data.matchId)).data.stage == 'groups'
+        ? isBeforeGroupDeadline()
+        : isBeforeKnockoutDeadline();
+    }
+  }
+}
