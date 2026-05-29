@@ -324,5 +324,6 @@ export const INITIAL_CONFIG = {
   currency: "ARS",
   paymentAlias: "yelcho.prode.mp",
   prizeDistribution: { first: 0.60, second: 0.25, third: 0.15 },
-  organizerCommission: 0.00
+  poolPercent: 0.50,
+  inviteCodes: ["YELCHO2026-A8F3K2", "YELCHO2026-XYZ", "YELCHO2026-PRODE", "YELCHO2026-MUNDIAL"]
 };

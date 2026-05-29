@@ -147,11 +147,6 @@ function getOrInitStorage<T>(key: string, initialData: T): T {
 
 export function getActiveConfig() {
   const config = getOrInitStorage<any>(STORAGE_KEYS.CONFIG, INITIAL_CONFIG);
-  // Guarantee upgrade to the new 100% prize pool config
-  if (config && config.organizerCommission !== 0.00) {
-    config.organizerCommission = 0.00;
-    saveActiveConfig(config);
-  }
   return config;
 }
 

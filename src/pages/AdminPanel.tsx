@@ -145,7 +145,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onNavigate }) => {
             🛠️ Panel del Administrador (Felix Blanco)
           </h2>
           <p className="font-mono text-xs text-brand-ink-muted">
-            Gestioná registros, aprobá transferencias de ARS 6.000 e ingresá los marcadores oficiales.
+            Gestioná registros, aprobá transferencias de ARS {config.buyInAmount.toLocaleString('es-AR')} e ingresá los marcadores oficiales.
           </p>
         </div>
         <button
