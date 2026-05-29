@@ -6,7 +6,8 @@ import {
   getActiveUsers, 
   saveActiveUsers, 
   getActiveConfig, 
-  saveActiveConfig
+  saveActiveConfig,
+  deleteUserDoc
 } from '../lib/firebase';
 import { Match } from '../data/seedData';
 import Avatar from '../components/shared/Avatar';
@@ -52,13 +53,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onNavigate }) => {
   }
 
   // 1. Confirm User Deposit and Update rankings cascade
-  const handleVerifyPayment = (uid: string, status: "confirmed" | "rejected" | "pending") => {
+  const handleVerifyPayment = async (uid: string, status: "confirmed" | "rejected" | "pending") => {
     const updatedUsers = users.map(u => {
       if (u.uid === uid) {
         return {
           ...u,
           paymentStatus: status,
-          paymentConfirmedBy: user.uid,
+          paymentConfirmedBy: user?.uid,
           paymentConfirmedAt: new Date().toISOString()
         };
       }
@@ -69,6 +70,16 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onNavigate }) => {
     
     // Trigger points recalculation block in firebase.ts by saving empty update
     saveActiveMatches([...matches]);
+  };
+
+  const handleDeleteUser = async (uid: string) => {
+    const confirmDelete = window.confirm("¿Estás seguro de que querés ELIMINAR a este usuario de la base de datos de forma permanente?");
+    if (!confirmDelete) return;
+
+    const remainingUsers = users.filter(u => u.uid !== uid);
+    setUsers(remainingUsers);
+    saveActiveUsers(remainingUsers);
+    await deleteUserDoc(uid);
   };
 
   // 3. Save Finished Match Score & Recalculate standings points in the network
@@ -202,6 +213,15 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onNavigate }) => {
                     </div>
 
                     <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                      {u.paymentStatus === "rejected" && (
+                        <button
+                          onClick={() => handleDeleteUser(u.uid)}
+                          className="font-mono text-[10px] font-bold uppercase rounded border-2 border-brand-error p-1 bg-brand-bg text-brand-error hover:bg-brand-error hover:text-brand-bg transition-colors"
+                          title="Eliminar permanentemente"
+                        >
+                          🗑️ Eliminar
+                        </button>
+                      )}
                       <select
                         value={u.paymentStatus}
                         onChange={(e) => handleVerifyPayment(u.uid, e.target.value as any)}

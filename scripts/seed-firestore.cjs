@@ -209,7 +209,7 @@ const INITIAL_CONFIG = {
   knockoutDeadline: "2026-06-27T23:59:00Z",
   buyInAmount: 6000,
   currency: "ARS",
-  paymentAlias: "yelcho.prode.mp",
+  paymentAlias: "felix.prode",
   prizeDistribution: { first: 0.60, second: 0.25, third: 0.15 },
   poolPercent: 0.50,
   inviteCodes: ["YELCHO2026-A8F3K2", "YELCHO2026-XYZ", "YELCHO2026-PRODE", "YELCHO2026-MUNDIAL"]

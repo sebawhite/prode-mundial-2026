@@ -17,7 +17,7 @@ export const PendingPayment: React.FC<PendingPaymentProps> = ({ onNavigate }) =>
   const config = getActiveConfig();
 
   const handleCopyAlias = () => {
-    navigator.clipboard.writeText("yelcho.prode.mp");
+    navigator.clipboard.writeText(config.paymentAlias);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -63,7 +63,7 @@ export const PendingPayment: React.FC<PendingPaymentProps> = ({ onNavigate }) =>
             <span>Alias MercadoPago:</span>
             <div className="flex items-center gap-1">
               <span className="font-bold text-brand-blue bg-brand-card px-2 py-0.5 rounded border border-brand-ink/20">
-                yelcho.prode.mp
+                {config.paymentAlias}
               </span>
               <button 
                 onClick={handleCopyAlias}
