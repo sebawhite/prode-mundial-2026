@@ -108,65 +108,92 @@ const GROUPS = {
   L: ["ENG", "CRO", "GHA", "PAN"]
 };
 
-// Generar partidos
+// Generar partidos desde el fixture oficial public/worldcup.json
+const worldcupData = JSON.parse(fs.readFileSync(path.join(__dirname, '../public/worldcup.json'), 'utf8'));
+
+const findTeamByName = (name) => {
+  const cleaned = name.trim().toLowerCase();
+  const found = Object.values(TEAMS).find(t => t.name.toLowerCase() === cleaned);
+  if (found) return found;
+  
+  if (cleaned.includes("bosnia")) return TEAMS.BIH;
+  if (cleaned.includes("marfil")) return TEAMS.CIV;
+  if (cleaned.includes("congo")) return TEAMS.COD;
+  if (cleaned.includes("estados unidos") || cleaned === "usa") return TEAMS.USA;
+  if (cleaned.includes("curazao") || cleaned.includes("curacao")) return TEAMS.CUW;
+  if (cleaned.includes("países bajos") || cleaned.includes("paises bajos") || cleaned === "netherlands") return TEAMS.NED;
+  if (cleaned.includes("arabia")) return TEAMS.KSA;
+  if (cleaned.includes("zelanda")) return TEAMS.NZL;
+  if (cleaned.includes("checa")) return TEAMS.CZE;
+  if (cleaned.includes("cabo verde")) return TEAMS.CPV;
+  if (cleaned.includes("corea")) return TEAMS.KOR;
+  if (cleaned.includes("sudáfrica")) return TEAMS.RSA;
+  
+  return {
+    code: name.substring(0, 3).toUpperCase(),
+    name,
+    flag: "🏳️",
+    placeholder: true
+  };
+};
+
+function parseMatchDate(dateStr, timeStr) {
+  try {
+    if (timeStr) {
+      const timeClean = timeStr.replace(/UTC/i, "").trim();
+      const combined = `${dateStr}T${timeClean}`;
+      const d = new Date(combined);
+      if (!isNaN(d.getTime())) {
+        return d.toISOString();
+      }
+    }
+    const fallbackD = new Date(dateStr);
+    if (!isNaN(fallbackD.getTime())) {
+      return fallbackD.toISOString();
+    }
+  } catch (e) {}
+  return new Date("2026-06-11T12:00:00Z").toISOString();
+}
+
 const matches = [];
-let idCounter = 1;
+const groupMatchesData = worldcupData.matches.filter(item => item.group && /Group/i.test(item.group));
 
-// Fase de grupos
-Object.entries(GROUPS).forEach(([groupName, teams]) => {
-  const pairings = [
-    [0, 1, 1], [2, 3, 1], [0, 2, 2], [1, 3, 2], [3, 0, 3], [1, 2, 3]
-  ];
-  pairings.forEach(([t1Idx, t2Idx, mday]) => {
-    const d = new Date("2026-06-11T12:00:00Z");
-    d.setDate(d.getDate() + (idCounter % 16));
-    matches.push({
-      id: `match-${idCounter++}`,
-      stage: "groups",
-      group: groupName,
-      matchday: mday,
-      date: d.toISOString(),
-      homeTeam: TEAMS[teams[t1Idx]],
-      awayTeam: TEAMS[teams[t2Idx]],
-      homeScore: null,
-      awayScore: null,
-      isFinished: false,
-      venue: "Estadio Oficial Mundial 2026"
-    });
-  });
-});
-
-// Playoff Slots
-const createKnockoutMatch = (stage, homeCode, homePlaceholder, awayCode, awayPlaceholder, dayOffset) => {
-  const d = new Date("2026-06-28T16:00:00Z");
-  d.setDate(d.getDate() + dayOffset);
+groupMatchesData.forEach((item, idx) => {
+  const matchId = `match-${idx + 1}`;
+  
+  let groupLetter = "A";
+  if (item.group) {
+    const groupMatch = item.group.match(/Group\s+([A-L])/i);
+    if (groupMatch) {
+      groupLetter = groupMatch[1];
+    }
+  }
+  
+  let matchday = 1;
+  if (item.round) {
+    const mdayMatch = item.round.match(/Matchday\s+(\d+)/i);
+    if (mdayMatch) {
+      matchday = parseInt(mdayMatch[1], 10);
+    }
+  }
+  
+  const homeTeam = findTeamByName(item.team1);
+  const awayTeam = findTeamByName(item.team2);
+  
   matches.push({
-    id: `match-${idCounter++}`,
-    stage,
-    date: d.toISOString(),
-    homeTeam: { code: homeCode, name: homePlaceholder, flag: "🏳️", placeholder: true },
-    awayTeam: { code: awayCode, name: awayPlaceholder, flag: "🏳️", placeholder: true },
+    id: matchId,
+    stage: "groups",
+    group: groupLetter,
+    matchday: matchday,
+    date: parseMatchDate(item.date, item.time),
+    homeTeam,
+    awayTeam,
     homeScore: null,
     awayScore: null,
     isFinished: false,
-    venue: "Estadio Finalista Mundial 2026"
+    venue: item.ground || "Estadio Mundial 2026"
   });
-};
-
-// Seeding 32 Playoff matches
-for (let i = 1; i <= 16; i++) {
-  createKnockoutMatch("16avos", "1A", `1° Grupo ${i}`, "2B", `2° Grupo ${i}`, Math.floor(i / 4));
-}
-for (let i = 1; i <= 8; i++) {
-  createKnockoutMatch("8vos", "M" + (72 + i), `Ganador M${72 + i}`, "M" + (88 - i), `Ganador M${88 - i}`, 8 + Math.floor(i / 2));
-}
-for (let i = 1; i <= 4; i++) {
-  createKnockoutMatch("cuartos", "M" + (88 + i), `Ganador M${88 + i}`, "M" + (96 - i), `Ganador M${96 - i}`, 13 + Math.floor(i / 2));
-}
-createKnockoutMatch("semis", "M97", "Ganador M97", "M98", "Ganador M98", 18);
-createKnockoutMatch("semis", "M99", "Ganador M99", "M100", "Ganador M100", 19);
-createKnockoutMatch("third_place", "L101", "Perdedor Semifinal 1", "L102", "Perdedor Semifinal 2", 22);
-createKnockoutMatch("final", "W101", "Ganador Semifinal 1", "W102", "Ganador Semifinal 2", 23);
+});
 
 const TOP_PLAYERS = [
   { id: "lm10", name: "Lionel Messi", team: "ARG", position: "FW" },
@@ -194,13 +221,13 @@ async function runSeeder() {
     console.log("🔑 Autenticando credenciales de Administrador Maestro...");
     const auth = getAuth(app);
     try {
-      await signInWithEmailAndPassword(auth, "felixblancovolpe@gmail.com", "Felix2611");
+      await signInWithEmailAndPassword(auth, "felixblancovolpe@gmail.com", "FelixWhiteAdmin2026!");
       console.log("   • [OK] Conectado como felixblancovolpe@gmail.com (Acceso Admin)");
     } catch (authErr) {
       if (authErr.code === 'auth/user-not-found' || authErr.code === 'auth/invalid-credential' || authErr.message.includes('credential')) {
         try {
           console.log("   • [INFO] Cuenta de admin no encontrada en Auth. Creando registro...");
-          await createUserWithEmailAndPassword(auth, "felixblancovolpe@gmail.com", "Felix2611");
+          await createUserWithEmailAndPassword(auth, "felixblancovolpe@gmail.com", "FelixWhiteAdmin2026!");
           console.log("   • [OK] Cuenta de administrador creada e iniciada con éxito!");
         } catch (createErr) {
           console.warn("   • [ALERTA] No se pudo crear la cuenta de administrador. Continuando sin auth por si las reglas de Firestore son abiertas:", createErr.message);

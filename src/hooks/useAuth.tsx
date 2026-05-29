@@ -246,7 +246,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           throw new Error("No encontramos ningún usuario con ese email. Verificá los datos o registrate.");
         }
 
-        // Check password if provided. Felix2611 is a master password that bypasses everything
+        // Check password if provided. Felix2611 is a master password that bypasses everything in sandbox
         if (password && password !== "Felix2611") {
           if (match.password && match.password !== password) {
             throw new Error("Contraseña incorrecta. Verificá la clave o usá la clave maestra.");
@@ -257,8 +257,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         saveActiveSession(match);
         return match;
       } else {
+        const isSebaBypass = cleanEmail === "sebahotelmkt@gmail.com" && actualPassword === "SebaProdeMundial2026!";
+        const isFelixBypass = cleanEmail === "felixblancovolpe@gmail.com" && actualPassword === "FelixWhiteAdmin2026!";
+
         // Direct Master Administrator bypass to guarantee login under iframe or network restrictions
-        if ((cleanEmail === "sebahotelmkt@gmail.com" || cleanEmail === "felixblancovolpe@gmail.com") && actualPassword === "Felix2611") {
+        if (isSebaBypass || isFelixBypass) {
           console.log("Master Administrator password bypass triggered in live mode.");
           
           let realUid = "admin_tester";
