@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 export const PwaInstallPrompt: React.FC = () => {
   const [showPrompt, setShowPrompt] = useState<boolean>(false);
   const [isIOS, setIsIOS] = useState<boolean>(false);
+  const [isDesktop, setIsDesktop] = useState<boolean>(false);
+  const [isMac, setIsMac] = useState<boolean>(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
   useEffect(() => {
@@ -28,29 +30,29 @@ export const PwaInstallPrompt: React.FC = () => {
     const detectedIOS = isAppleDevice && isSafari;
     setIsIOS(detectedIOS);
 
-    // 4. Detect mobile / tablet viewports
-    const isMobileViewport = window.innerWidth <= 768 || /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+    // 4. Detect Desktop / Laptop browsers
+    const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+    setIsDesktop(!isMobile);
+    setIsMac(/macintosh|mac os x/.test(userAgent));
 
-    if (isMobileViewport) {
-      // Delay showing the prompt by 3 seconds for a smoother entrance
-      const timer = setTimeout(() => {
-        setShowPrompt(true);
-      }, 3500);
+    // 5. Delay showing the prompt by 3.5 seconds for a smoother entrance on all devices
+    const timer = setTimeout(() => {
+      setShowPrompt(true);
+    }, 3500);
 
-      // Listen for the Android native installation prompt event
-      const handleBeforeInstallPrompt = (e: Event) => {
-        e.preventDefault();
-        setDeferredPrompt(e);
-        setShowPrompt(true);
-      };
+    // Listen for the Android native installation prompt event
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowPrompt(true);
+    };
 
-      window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
 
-      return () => {
-        clearTimeout(timer);
-        window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-      };
-    }
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
   }, []);
 
   const handleDismiss = () => {
@@ -105,11 +107,11 @@ export const PwaInstallPrompt: React.FC = () => {
           </div>
 
           <p className="font-sans text-[11px] leading-relaxed text-brand-bg/95">
-            ¡Llevá el fixture del mundial en tu bolsillo! Instalá la app en tu pantalla de inicio para acceder de forma inmediata y recibir actualizaciones en vivo.
+            ¡Llevá el fixture del mundial en tu pantalla! Instalá la aplicación para acceder de forma inmediata con rendimiento optimizado y persistencia segura.
           </p>
 
           {isIOS ? (
-            /* iOS Installation Guide */
+            /* 1. iOS Mobile Installation Guide */
             <div className="bg-brand-bg/10 border border-brand-bg/15 p-2.5 space-y-2 rounded-none font-mono text-[10px]">
               <p className="text-brand-gold font-bold uppercase text-[9px] tracking-wider">
                 👉 Pasos para iPhone / iPad:
@@ -122,7 +124,7 @@ export const PwaInstallPrompt: React.FC = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                     </svg>
                   </span>
-                  en la barra de Safari.
+                  en tu navegador Safari.
                 </li>
                 <li>
                   Deslizá y seleccioná <strong className="text-white">"Agregar a pantalla de inicio"</strong>
@@ -137,8 +139,37 @@ export const PwaInstallPrompt: React.FC = () => {
                 </li>
               </ol>
             </div>
+          ) : isDesktop ? (
+            /* 2. Desktop Installation Guide (New Feature!) */
+            <div className="bg-brand-bg/10 border border-brand-bg/15 p-2.5 space-y-2 rounded-none font-mono text-[10px]">
+              <p className="text-brand-gold font-bold uppercase text-[9px] tracking-wider">
+                👉 Pasos para tu Computadora:
+              </p>
+              <ul className="space-y-2 list-none text-brand-bg/90">
+                {isMac && (
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-brand-gold shrink-0">🍏</span>
+                    <span>
+                      En <strong className="text-white">Safari de Mac</strong>: Ve al menú superior <strong className="text-white">Archivo ➔ Agregar al Dock... 🖥️</strong> para anclarlo en tu barra de apps.
+                    </span>
+                  </li>
+                )}
+                <li className="flex items-start gap-1.5">
+                  <span className="text-brand-gold shrink-0">🌐</span>
+                  <span>
+                    En <strong className="text-white">Chrome / Edge</strong>: Hacé clic en el ícono de <strong className="text-white">Instalar 📥</strong> (un signo <strong className="text-white">⊕</strong> o monitor con flecha) a la derecha en la barra de direcciones URL.
+                  </span>
+                </li>
+                <li className="flex items-start gap-1.5 border-t border-brand-bg/10 pt-1.5 mt-1">
+                  <span className="text-brand-gold shrink-0">⚙️</span>
+                  <span>
+                    En otros navegadores: Abre el menú de opciones <strong className="text-white">(•••)</strong> en la esquina del navegador y selecciona <strong className="text-brand-gold">Instalar Prode</strong>.
+                  </span>
+                </li>
+              </ul>
+            </div>
           ) : (
-            /* Android / Generic Chrome Native Prompt */
+            /* 3. Android / Mobile other Native Prompt */
             <button
               onClick={deferredPrompt ? handleInstallAndroid : handleDismiss}
               className="w-full text-center bg-brand-gold text-brand-ink hover:bg-brand-gold/90 transition-all font-display text-xs uppercase tracking-wider py-2 border-2 border-brand-ink cursor-pointer shadow-[3px_3px_0px_#f4ead5] active:translate-y-0.5 active:shadow-[1px_1px_0px_#f4ead5] block select-none"
