@@ -12,13 +12,16 @@ export const Signup: React.FC<SignupProps> = ({ onNavigate }) => {
     nickname: '',
     email: '',
     whatsapp: '',
-    password: ''
+    password: '',
+    confirmPassword: ''
   });
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [isCompressing, setIsCompressing] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -45,8 +48,18 @@ export const Signup: React.FC<SignupProps> = ({ onNavigate }) => {
     setErrorMsg(null);
     setSuccessMsg(null);
 
-    if (!formData.fullName || !formData.email || !formData.whatsapp || !formData.password) {
+    if (!formData.fullName || !formData.email || !formData.whatsapp || !formData.password || !formData.confirmPassword) {
       setErrorMsg("Por favor completá todos los campos obligatorios (*).");
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setErrorMsg("La contraseña debe tener al menos 6 caracteres.");
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setErrorMsg("Las contraseñas no coinciden. Por favor verificalas.");
       return;
     }
 
@@ -177,15 +190,49 @@ export const Signup: React.FC<SignupProps> = ({ onNavigate }) => {
               <label className="block text-xs font-mono font-bold uppercase mb-1 text-brand-ink">
                 Contraseña *
               </label>
-              <input
-                type="password"
-                name="password"
-                required
-                value={formData.password}
-                onChange={handleInputChange}
-                className="w-full text-base border-2 border-brand-ink p-2 rounded bg-brand-bg font-sans focus:outline-none focus:ring-2 focus:ring-brand-accent focus:bg-brand-bg"
-                placeholder="Mínimo 6 caracteres"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  required
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="w-full text-base border-2 border-brand-ink p-2 pr-20 rounded bg-brand-bg font-sans focus:outline-none focus:ring-2 focus:ring-brand-accent focus:bg-brand-bg"
+                  placeholder="Mínimo 6 caracteres"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-mono font-bold uppercase text-brand-ink/70 hover:text-brand-ink px-2 py-1 bg-brand-bg/50 border border-brand-ink/20 rounded select-none cursor-pointer"
+                >
+                  {showPassword ? "Ocultar 👁️" : "Mostrar 👁️"}
+                </button>
+              </div>
+            </div>
+
+            {/* Confirm password */}
+            <div>
+              <label className="block text-xs font-mono font-bold uppercase mb-1 text-brand-ink">
+                Confirmar Contraseña *
+              </label>
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  required
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  className="w-full text-base border-2 border-brand-ink p-2 pr-20 rounded bg-brand-bg font-sans focus:outline-none focus:ring-2 focus:ring-brand-accent focus:bg-brand-bg"
+                  placeholder="Repetir contraseña"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-mono font-bold uppercase text-brand-ink/70 hover:text-brand-ink px-2 py-1 bg-brand-bg/50 border border-brand-ink/20 rounded select-none cursor-pointer"
+                >
+                  {showConfirmPassword ? "Ocultar 👁️" : "Mostrar 👁️"}
+                </button>
+              </div>
             </div>
           </div>
 

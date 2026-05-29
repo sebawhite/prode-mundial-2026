@@ -13,7 +13,7 @@ const resolvedConfig = {
   storageBucket: metaEnv.VITE_FIREBASE_STORAGE_BUCKET || firebaseConfig?.storageBucket,
   messagingSenderId: metaEnv.VITE_FIREBASE_MESSAGING_SENDER_ID || firebaseConfig?.messagingSenderId,
   appId: metaEnv.VITE_FIREBASE_APP_ID || firebaseConfig?.appId,
-  firestoreDatabaseId: metaEnv.VITE_FIREBASE_DATABASE_ID || firebaseConfig?.firestoreDatabaseId || 'default'
+  firestoreDatabaseId: metaEnv.VITE_FIREBASE_DATABASE_ID || (firebaseConfig as any)?.firestoreDatabaseId || 'default'
 };
 
 // Determine if Firebase is configured with real values or default placeholders

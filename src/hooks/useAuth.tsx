@@ -124,6 +124,9 @@ export const compressImage = (file: File): Promise<string> => {
   });
 };
 
+// Flag global para mitigar condiciones de carrera durante el registro
+let isSigningUp = false;
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -151,6 +154,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } else {
       fetchPublicConfig();
       const unsubscribe = auth.onAuthStateChanged(async (authUser: any) => {
+        if (isSigningUp) {
+          console.log("onAuthStateChanged: Registro en progreso, omitiendo auto-fetch para evitar condiciones de carrera.");
+          return;
+        }
         if (authUser) {
           try {
             // Try of fetch user profile from Firestore to ensure freshness
@@ -405,6 +412,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }): Promise<UserProfile> => {
     setError(null);
     setLoading(true);
+    isSigningUp = true;
     try {
       const checkEmail = params.email.trim().toLowerCase();
       const isAdminEmail = checkEmail === "sebahotelmkt@gmail.com" || checkEmail === "felixblancovolpe@gmail.com";
@@ -515,6 +523,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setError(err.message);
       throw err;
     } finally {
+      isSigningUp = false;
       setLoading(false);
     }
   };
