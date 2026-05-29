@@ -13,10 +13,10 @@ service cloud.firestore {
     // Cierre 1 (Groups & Specials): 10 June 2026 23:59 UTC = Epoch 1781135940 seconds (1781135940000 ms)
     // Cierre 2 (Knockouts): 27 June 2026 23:59 UTC = Epoch 1782604740 seconds (1782604740000 ms)
     function isBeforeGroupDeadline() {
-      return request.time < timestamp.date(1781135940000);
+      return request.time.toMillis() < 1781135940000;
     }
     function isBeforeKnockoutDeadline() {
-      return request.time < timestamp.date(1782604740000);
+      return request.time.toMillis() < 1782604740000;
     }
 
     function isMatchUnfinished(matchId) {
@@ -106,7 +106,7 @@ service cloud.firestore {
     }
 
     function isMatchActiveForPrediction(predictionId) {
-      return isBeforeGroupDeadline() || isBeforeKnockoutDeadline();
+      return isBeforeGroupDeadline();
     }
   }
 }
