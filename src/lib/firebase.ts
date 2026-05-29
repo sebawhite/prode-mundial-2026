@@ -229,8 +229,8 @@ function recalculateAllScores(matches: Match[]) {
     u.rank = index + 1;
   });
   
-  localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
   localStorage.setItem(STORAGE_KEYS.PREDICTIONS, JSON.stringify(predictions));
+  saveActiveUsers(users);
 }
 
 export function getActiveUsers(): any[] {
