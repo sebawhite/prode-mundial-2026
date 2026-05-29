@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v2';
+const CACHE_VERSION = 'v3';
 const STATIC_CACHE = `prode-static-${CACHE_VERSION}`;
 const IMAGE_CACHE = `prode-images-${CACHE_VERSION}`;
 const FONT_CACHE = `prode-fonts-${CACHE_VERSION}`;
@@ -128,10 +128,33 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 3. STRATEGY FOR APP SHELL & STATIC ASSETS (HTML, JS, CSS, JSON, local files)
-  // Uses Stale-While-Revalidate to ensure connection-resilient, instant loading
+  // 3a. STRATEGY FOR HTML DOCUMENTS (navigations): Network-First
+  // The HTML document references content-hashed JS/CSS filenames that change on every
+  // deploy. Serving a stale cached document would point the browser at old asset hashes
+  // that no longer exist on the server (404), leaving a permanently blank page. So we
+  // ALWAYS fetch fresh HTML when online, and only fall back to cache when fully offline.
+  if (request.mode === 'navigate' || request.destination === 'document') {
+    event.respondWith(
+      fetch(request)
+        .then((networkResponse) => {
+          if (networkResponse.status === 200) {
+            const cacheCopy = networkResponse.clone();
+            caches.open(STATIC_CACHE).then((cache) => cache.put(request, cacheCopy));
+          }
+          return networkResponse;
+        })
+        .catch(() => {
+          // Offline fallback: serve the last cached app shell
+          return caches.match(request)
+            .then((cached) => cached || caches.match('/index.html') || caches.match('/'));
+        })
+    );
+    return;
+  }
+
+  // 3b. STRATEGY FOR STATIC ASSETS (hashed JS, CSS, JSON, local files): Stale-While-Revalidate
+  // Content-hashed filenames are immutable, so a cache hit is always correct and instant.
   if (
-    request.destination === 'document' ||
     request.destination === 'script' ||
     request.destination === 'style' ||
     url.origin === self.location.origin
@@ -144,15 +167,9 @@ self.addEventListener('fetch', (event) => {
             caches.open(STATIC_CACHE).then((cache) => cache.put(request, cacheCopy));
           }
           return networkResponse;
-        }).catch(() => {
-          // Fallback to cached index.html for SPA page loads if network fails and route is not in cache
-          if (request.destination === 'document') {
-            return caches.match('/index.html') || caches.match('/');
-          }
-          return null;
-        });
+        }).catch(() => null);
 
-        // Instantly return the cached app shell while updating in background, fallback to offline index.html if completely empty
+        // Instantly return the cached asset while updating in background
         return cachedResponse || fetchPromise;
       })
     );
