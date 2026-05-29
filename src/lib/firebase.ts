@@ -187,7 +187,7 @@ export function saveActiveMatches(matches: Match[]) {
 }
 
 // Recalculates user points based on final scores
-function recalculateAllScores(matches: Match[]) {
+export function recalculateAllScores(matches: Match[]) {
   const users = getOrInitStorage<any[]>(STORAGE_KEYS.USERS, []);
   const predictions = getOrInitStorage<any[]>(STORAGE_KEYS.PREDICTIONS, []);
   
