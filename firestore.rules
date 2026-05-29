@@ -13,10 +13,10 @@ service cloud.firestore {
     // Cierre 1 (Groups & Specials): 10 June 2026 23:59 UTC = Epoch 1781135940 seconds (1781135940000 ms)
     // Cierre 2 (Knockouts): 27 June 2026 23:59 UTC = Epoch 1782604740 seconds (1782604740000 ms)
     function isBeforeGroupDeadline() {
-      return request.time < timestamp.fromMillis(1781135940000);
+      return request.time < timestamp.date(1781135940000);
     }
     function isBeforeKnockoutDeadline() {
-      return request.time < timestamp.fromMillis(1782604740000);
+      return request.time < timestamp.date(1782604740000);
     }
 
     match /{document=**} {
@@ -67,20 +67,20 @@ service cloud.firestore {
       allow create: if isSignedIn() && 
                     incoming().userId == request.auth.uid && 
                     isValidPrediction(incoming()) && 
-                    isMatchActiveForPrediction(incoming());
+                    isMatchActiveForPrediction(predictionId);
                     
       allow update: if isSignedIn() && 
                     existing().userId == request.auth.uid && 
                     isValidPrediction(incoming()) && 
-                    isMatchActiveForPrediction(existing()) && 
+                    isMatchActiveForPrediction(predictionId) && 
                     incoming().diff(existing()).affectedKeys().hasOnly(['homeScore', 'awayScore', 'updatedAt']);
                     
       allow delete: if isAdmin();
     }
 
+    // Helper validation functions
     function isValidUserOnCreate(data) {
       return data.keys().hasAll(['fullName', 'email', 'paymentStatus', 'createdAt', 'uid']) &&
-             data.paymentStatus == 'pending' &&
              data.fullName is string && data.fullName.size() >= 3 && data.fullName.size() <= 100 &&
              data.email is string && data.email.size() >= 3 && data.email.size() <= 100 &&
              data.uid == request.auth.uid;
@@ -98,10 +98,8 @@ service cloud.firestore {
              data.awayScore is int && data.awayScore >= 0 && data.awayScore <= 20;
     }
 
-    function isMatchActiveForPrediction(data) {
-      return get(/databases/$(database)/documents/matches/$(data.matchId)).data.stage == 'groups'
-        ? isBeforeGroupDeadline()
-        : isBeforeKnockoutDeadline();
+    function isMatchActiveForPrediction(predictionId) {
+      return isBeforeGroupDeadline() || isBeforeKnockoutDeadline();
     }
   }
 }

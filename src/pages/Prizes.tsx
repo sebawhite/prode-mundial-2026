@@ -29,8 +29,11 @@ export const Prizes: React.FC<PrizesProps> = ({ onNavigate }) => {
   const pendingCount = users.filter(u => u.paymentStatus === "pending").length;
   
   const totalCollected = confirmedCount * config.buyInAmount;
-  const organizerCommissionAmount = totalCollected * config.organizerCommission;
-  const netPrizePool = totalCollected * (1 - config.organizerCommission);
+  const donationAmount = totalCollected * 0.50;
+  const netPrizePool = totalCollected * 0.50;
+
+  const schoolGoal = 300000;
+  const schoolProgressPercent = Math.min(100, Math.round((donationAmount / schoolGoal) * 100));
 
   const prizes = {
     first: netPrizePool * config.prizeDistribution.first,
@@ -95,10 +98,50 @@ export const Prizes: React.FC<PrizesProps> = ({ onNavigate }) => {
               <span className="font-bold">${totalCollected.toLocaleString('es-AR')} ARS</span>
             </div>
             
+            <div className="flex justify-between py-2 text-brand-blue font-bold">
+              <span>🌍 Donación Solidaria Wonderful School (50%):</span>
+              <span>${donationAmount.toLocaleString('es-AR')} ARS</span>
+            </div>
+
             <div className="flex justify-between py-2 font-bold text-sm text-brand-accent border-t-2 border-brand-ink">
-              <span>🏆 Pozo Neto Final de Premios Ganadores (100%):</span>
+              <span>🏆 Pozo Neto Final de Premios Ganadores (50%):</span>
               <span>${netPrizePool.toLocaleString('es-AR')} ARS</span>
             </div>
+          </div>
+
+          {/* Zanzibar Wonderful School Thermometer/Progress Bar */}
+          <div className="bg-brand-bg/60 border-2 border-brand-ink p-4 rounded-md space-y-3">
+            <div className="flex justify-between items-start">
+              <div>
+                <h4 className="font-sans font-black text-sm text-brand-ink uppercase tracking-tight flex items-center gap-1.5">
+                  🇹🇿 Proyecto Solidario Zanzíbar
+                </h4>
+                <p className="font-sans text-[11px] text-brand-ink-muted mt-0.5 leading-snug">
+                  Destinado a la escuela <strong className="text-brand-ink">Wonderful School</strong> para la compra de <strong>Bancos de Madera</strong>.
+                </p>
+              </div>
+              <span className="font-mono text-xs font-black bg-brand-blue text-brand-bg px-2 py-0.5 rounded">
+                {schoolProgressPercent}%
+              </span>
+            </div>
+
+            {/* Visual Progress Bar Wrapper */}
+            <div className="space-y-1.5">
+              <div className="w-full bg-brand-bg border-2 border-brand-ink h-5 rounded-none overflow-hidden relative p-[2px]">
+                <div 
+                  className="bg-gradient-to-r from-brand-blue to-brand-accent h-full transition-all duration-500 rounded-none"
+                  style={{ width: `${schoolProgressPercent}%` }}
+                ></div>
+              </div>
+              <div className="flex justify-between font-mono text-[10px] font-bold text-brand-ink">
+                <span>Recaudado: ${donationAmount.toLocaleString('es-AR')} ARS</span>
+                <span>Meta: $300.000 ARS</span>
+              </div>
+            </div>
+
+            <p className="font-sans text-[10px] text-brand-ink-muted italic leading-normal">
+              💡 De cada inscripción de $6.000, <strong>$3.000 (50%)</strong> se reservan para esta causa escolar. ¡Con las firmas de todos ayudamos a equipar las aulas de los niños en Zanzíbar!
+            </p>
           </div>
 
           {/* Golden distribution breakdown podium */}

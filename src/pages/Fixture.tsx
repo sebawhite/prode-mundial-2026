@@ -13,11 +13,9 @@ import Avatar from '../components/shared/Avatar';
 
 interface FixtureProps {
   onNavigate: (view: string) => void;
-  auditUserId?: string;
-  onSetAuditUser?: (uid: string) => void;
 }
 
-export const Fixture: React.FC<FixtureProps> = ({ onNavigate, auditUserId, onSetAuditUser }) => {
+export const Fixture: React.FC<FixtureProps> = ({ onNavigate }) => {
   const { user } = useAuth();
   const { matches, loading, error } = useWorldCupData();
   const [predictions, setPredictions] = useState<any[]>(getActivePredictions());
@@ -30,7 +28,7 @@ export const Fixture: React.FC<FixtureProps> = ({ onNavigate, auditUserId, onSet
   const [searchQuery, setSearchQuery] = useState<string>("");
   
   // Viewer mode states: lets user audit other players' predictions if deadline passed
-  const [viewingUserId, setViewingUserId] = useState<string>(auditUserId || user?.uid || "");
+  const [viewingUserId, setViewingUserId] = useState<string>(user?.uid || "");
   const [groupDeadlinePassed, setGroupDeadlinePassed] = useState(false);
   const [saveStatus, setSaveStatus] = useState<Record<string, "saved" | "saving" | null>>({});
 
@@ -49,12 +47,6 @@ export const Fixture: React.FC<FixtureProps> = ({ onNavigate, auditUserId, onSet
     const interval = setInterval(checkDeadline, 10000);
     return () => clearInterval(interval);
   }, []);
-
-  useEffect(() => {
-    if (auditUserId) {
-      setViewingUserId(auditUserId);
-    }
-  }, [auditUserId]);
 
   // Cleanup timers on destruction
   useEffect(() => {
@@ -188,12 +180,7 @@ export const Fixture: React.FC<FixtureProps> = ({ onNavigate, auditUserId, onSet
           
           <select 
             value={viewingUserId}
-            onChange={(e) => {
-              setViewingUserId(e.target.value);
-              if (onSetAuditUser) {
-                onSetAuditUser(e.target.value);
-              }
-            }}
+            onChange={(e) => setViewingUserId(e.target.value)}
             className="border-2 border-brand-ink p-2 font-sans text-sm rounded bg-brand-bg focus:ring-1 focus:ring-brand-accent focus:outline-none cursor-pointer"
           >
             {users.filter(u => u.paymentStatus === "confirmed").map(u => (

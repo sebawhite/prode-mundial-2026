@@ -334,18 +334,23 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         {/* Prize Pool "El Pozo" (col-span-8) */}
         <section className="col-span-1 md:col-span-8 bg-[#c89832] border-2 border-brand-ink shadow-[6px_6px_0px_#2a1f17] p-5 flex flex-col justify-between min-h-[220px]">
           <div>
-            <span className="font-mono text-[9px] uppercase tracking-wider text-brand-ink/40 block">⊕ REGLAMENTO_FINANZAS</span>
+            <div className="flex justify-between items-start">
+              <span className="font-mono text-[9px] uppercase tracking-wider text-brand-ink/40 block">⊕ REGLAMENTO_FINANZAS • SOLIDARIO</span>
+              <span className="bg-brand-ink text-brand-bg text-[8px] font-mono font-bold px-1.5 py-0.5 rounded uppercase tracking-wide">
+                🇹🇿 Zanzibar 50/50
+              </span>
+            </div>
             <p className="text-xl font-black uppercase text-brand-ink leading-none tracking-tight mt-2">El Pozo Acumulado</p>
-            <p className="text-[10px] font-bold uppercase text-brand-ink/80 mt-1">Pozo de Premios Total (100% Recaudado)</p>
+            <p className="text-[10px] font-bold uppercase text-brand-ink/80 mt-1">Pozo neto para ganadores (50% de lo Recaudado)</p>
           </div>
 
           <div className="my-3 flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2">
             <div>
               <p className="text-4xl sm:text-5xl font-black font-mono text-brand-ink tracking-tighter leading-none">
-                ${(users.filter(u => u.paymentStatus === "confirmed").length * config.buyInAmount * (1 - config.organizerCommission)).toLocaleString('es-AR', { maximumFractionDigits: 0 })}
+                ${(users.filter(u => u.paymentStatus === "confirmed").length * config.buyInAmount * 0.50).toLocaleString('es-AR', { maximumFractionDigits: 0 })}
               </p>
               <p className="text-[9px] font-mono font-bold text-brand-ink/70 mt-1">
-                ARS TOTAL (100% acumulado para los ganadores)
+                ARS TOTAL (El restante 50% se dona a Wonderful School Zanzíbar)
               </p>
             </div>
             
@@ -357,10 +362,15 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
             </button>
           </div>
 
-          <div className="bg-brand-ink text-brand-bg p-2.5 text-[9px] font-mono font-bold uppercase leading-tight select-none rounded-none">
-            🏆 1° PUESTO: ${(users.filter(u => u.paymentStatus === "confirmed").length * config.buyInAmount * (1 - config.organizerCommission) * 0.60).toLocaleString('es-AR', { maximumFractionDigits: 0 })} (60%) <br />
-            🥈 2° PUESTO: ${(users.filter(u => u.paymentStatus === "confirmed").length * config.buyInAmount * (1 - config.organizerCommission) * 0.25).toLocaleString('es-AR', { maximumFractionDigits: 0 })} (25%) <br />
-            🥉 3° PUESTO: ${(users.filter(u => u.paymentStatus === "confirmed").length * config.buyInAmount * (1 - config.organizerCommission) * 0.15).toLocaleString('es-AR', { maximumFractionDigits: 0 })} (15%)
+          <div className="bg-brand-ink text-brand-bg p-2.5 text-[9px] font-mono font-bold uppercase leading-tight select-none rounded-none space-y-1">
+            <div>
+              🏆 1° PUESTO: ${(users.filter(u => u.paymentStatus === "confirmed").length * config.buyInAmount * 0.50 * 0.60).toLocaleString('es-AR', { maximumFractionDigits: 0 })} (60%) <br />
+              🥈 2° PUESTO: ${(users.filter(u => u.paymentStatus === "confirmed").length * config.buyInAmount * 0.50 * 0.25).toLocaleString('es-AR', { maximumFractionDigits: 0 })} (25%) <br />
+              🥉 3° PUESTO: ${(users.filter(u => u.paymentStatus === "confirmed").length * config.buyInAmount * 0.50 * 0.15).toLocaleString('es-AR', { maximumFractionDigits: 0 })} (15%)
+            </div>
+            <div className="border-t border-brand-bg/20 pt-1 mt-1 text-brand-gold text-[8.5px] font-sans">
+              🌍 Donación acumulada actual Wonderful School (Zanzíbar) para bancos: ${(users.filter(u => u.paymentStatus === "confirmed").length * config.buyInAmount * 0.50).toLocaleString('es-AR', { maximumFractionDigits: 0 })} ARS / $300.000 ARS meta.
+            </div>
           </div>
         </section>
 

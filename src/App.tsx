@@ -9,6 +9,7 @@ import Fixture from './pages/Fixture';
 import Ranking from './pages/Ranking';
 import Prizes from './pages/Prizes';
 import AdminPanel from './pages/AdminPanel';
+import PwaInstallPrompt from './components/shared/PwaInstallPrompt';
 
 export function NavigationContainer() {
   const { user, loading } = useAuth();
@@ -71,6 +72,9 @@ export function NavigationContainer() {
   return (
     <div className="min-h-screen bg-brand-bg text-brand-ink relative grain-overlay flex flex-col justify-between">
       
+      {/* PWA Floating Install Prompt */}
+      <PwaInstallPrompt />
+      
       <div>
         {/* Decorative Stamp Registration crossmarks at corners of outer body */}
         <div className="absolute top-2 left-2 text-[10px] select-none text-brand-ink-muted/30 font-mono">⊕ REG_MARK</div>
@@ -131,13 +135,7 @@ export function NavigationContainer() {
           
           {/* Core Authorized Gameplay Views */}
           {currentView === 'home' && <Dashboard onNavigate={handleNavigate} />}
-          {currentView === 'fixture' && (
-            <Fixture 
-              onNavigate={handleNavigate} 
-              auditUserId={auditUserId}
-              onSetAuditUser={handleSetAuditUser}
-            />
-          )}
+          {currentView === 'fixture' && <Fixture onNavigate={handleNavigate} />}
           
           {currentView === 'ranking' && (
             <Ranking 

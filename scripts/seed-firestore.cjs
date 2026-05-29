@@ -5,10 +5,18 @@
 
 const { initializeApp } = require('firebase/app');
 const { getFirestore, doc, setDoc } = require('firebase/firestore');
+const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } = require('firebase/auth');
 const fs = require('fs');
 const path = require('path');
 
-// 1. Try to read active firebase configurations
+// 1. Load environment variables if dotenv is available
+try {
+  require('dotenv').config();
+} catch (e) {
+  // Silent fallback
+}
+
+// 2. Try to read active firebase configurations
 let configData = {};
 try {
   const configPath = path.join(__dirname, '../firebase-applet-config.json');
@@ -20,12 +28,12 @@ try {
 }
 
 const firebaseConfig = {
-  apiKey: configData.apiKey || process.env.FIREBASE_API_KEY || "YOUR_API_KEY",
-  authDomain: configData.authDomain || "YOUR_PROJECT.firebaseapp.com",
-  projectId: configData.projectId || "YOUR_PROJECT_ID",
-  storageBucket: configData.storageBucket || "YOUR_PROJECT.appspot.com",
-  messagingSenderId: configData.messagingSenderId || "YOUR_MESSAGING_SENDER_ID",
-  appId: configData.appId || "YOUR_APP_ID"
+  apiKey: process.env.VITE_FIREBASE_API_KEY || process.env.FIREBASE_API_KEY || configData.apiKey || "YOUR_API_KEY",
+  authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN || process.env.FIREBASE_AUTH_DOMAIN || configData.authDomain || "YOUR_PROJECT.firebaseapp.com",
+  projectId: process.env.VITE_FIREBASE_PROJECT_ID || process.env.FIREBASE_PROJECT_ID || configData.projectId || "YOUR_PROJECT_ID",
+  storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET || process.env.FIREBASE_STORAGE_BUCKET || configData.storageBucket || "YOUR_PROJECT.appspot.com",
+  messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || process.env.FIREBASE_MESSAGING_SENDER_ID || configData.messagingSenderId || "YOUR_MESSAGING_SENDER_ID",
+  appId: process.env.VITE_FIREBASE_APP_ID || process.env.FIREBASE_APP_ID || configData.appId || "YOUR_APP_ID"
 };
 
 console.log("🚀 Inicializando Firebase con el proyecto:", firebaseConfig.projectId);
@@ -183,6 +191,25 @@ const INITIAL_CONFIG = {
 // 6. Execution runner upload
 async function runSeeder() {
   try {
+    console.log("🔑 Autenticando credenciales de Administrador Maestro...");
+    const auth = getAuth(app);
+    try {
+      await signInWithEmailAndPassword(auth, "felixblancovolpe@gmail.com", "Felix2611");
+      console.log("   • [OK] Conectado como felixblancovolpe@gmail.com (Acceso Admin)");
+    } catch (authErr) {
+      if (authErr.code === 'auth/user-not-found' || authErr.code === 'auth/invalid-credential' || authErr.message.includes('credential')) {
+        try {
+          console.log("   • [INFO] Cuenta de admin no encontrada en Auth. Creando registro...");
+          await createUserWithEmailAndPassword(auth, "felixblancovolpe@gmail.com", "Felix2611");
+          console.log("   • [OK] Cuenta de administrador creada e iniciada con éxito!");
+        } catch (createErr) {
+          console.warn("   • [ALERTA] No se pudo crear la cuenta de administrador. Continuando sin auth por si las reglas de Firestore son abiertas:", createErr.message);
+        }
+      } else {
+        console.warn("   • [ALERTA] Falló el login de administrador. Continuando sin auth por si las reglas son abiertas:", authErr.message);
+      }
+    }
+
     console.log("1. Generando configuraciones iniciales...");
     await setDoc(doc(db, "config", "settings"), INITIAL_CONFIG);
 

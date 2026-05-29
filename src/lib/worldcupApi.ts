@@ -119,28 +119,14 @@ function parseMatchDate(dateStr: string, timeStr?: string): string {
  * Fetch and map match list from openfootball Public API
  */
 export async function fetchWorldCup2026Matches(): Promise<Match[]> {
-  const primaryUrl = "https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json";
-  const fallbackUrl = "/worldcup.json";
+  const url = "https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json";
   
-  let data: any = null;
-  try {
-    const res = await fetch(primaryUrl);
-    if (!res.ok) throw new Error(`Primary fetch failed: ${res.statusText}`);
-    data = await res.json();
-    console.log("Successfully loaded live tournament schedule from openfootball GitHub!");
-  } catch (err: any) {
-    console.warn("Failed to load or parse primary openfootball JSON from GitHub, using locally hosted complete backup:", err);
-    try {
-      const res = await fetch(fallbackUrl);
-      if (!res.ok) throw new Error(`Fallback fetch failed: ${res.statusText}`);
-      data = await res.json();
-      console.log("Successfully loaded locally hosted clean tournament schedule!");
-    } catch (fallbackErr: any) {
-      console.error("Both primary and fallback fetches failed:", fallbackErr);
-      throw new Error("No se pudo conectar al servidor oficial del Mundial ni al fixture de respaldo.");
-    }
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`Failed to load world cup data: ${res.statusText}`);
   }
-
+  
+  const data = await res.json();
   if (!data || !Array.isArray(data.matches)) {
     throw new Error("Invalid json format: 'matches' is missing or not an array");
   }

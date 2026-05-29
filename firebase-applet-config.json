@@ -1,9 +1,8 @@
 {
-  "apiKey": "AIzaSyDhDC2gtTCM52CYkHl5jYFg-InatKBGDR4",
-  "authDomain": "prode-mundial-2026-3c3fe.firebaseapp.com",
-  "projectId": "prode-mundial-2026-3c3fe",
-  "storageBucket": "prode-mundial-2026-3c3fe.firebasestorage.app",
-  "messagingSenderId": "226047996093",
-  "appId": "1:226047996093:web:a895166551b361a12347d4",
-  "firestoreDatabaseId": "default"
+  "apiKey": "PLACEHOLDER",
+  "authDomain": "PLACEHOLDER.firebaseapp.com",
+  "projectId": "PLACEHOLDER",
+  "storageBucket": "PLACEHOLDER.appspot.com",
+  "messagingSenderId": "PLACEHOLDER",
+  "appId": "PLACEHOLDER"
 }

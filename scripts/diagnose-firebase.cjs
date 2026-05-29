@@ -32,14 +32,14 @@ try {
   console.log("❌ Error leyendo firebase-applet-config.json:", err.message);
 }
 
-// 2. Map Configuration (prioritize json config, fallback to process.env)
+// 2. Map Configuration (prioritize process.env, fallback to json config)
 const firebaseConfig = {
-  apiKey: (configData && configData.apiKey) || process.env.VITE_FIREBASE_API_KEY || process.env.FIREBASE_API_KEY,
-  authDomain: (configData && configData.authDomain) || process.env.VITE_FIREBASE_AUTH_DOMAIN || process.env.FIREBASE_AUTH_DOMAIN,
-  projectId: (configData && configData.projectId) || process.env.VITE_FIREBASE_PROJECT_ID || process.env.FIREBASE_PROJECT_ID,
-  storageBucket: (configData && configData.storageBucket) || process.env.VITE_FIREBASE_STORAGE_BUCKET || process.env.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: (configData && configData.messagingSenderId) || process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || process.env.FIREBASE_MESSAGING_SENDER_ID,
-  appId: (configData && configData.appId) || process.env.VITE_FIREBASE_APP_ID || process.env.FIREBASE_APP_ID,
+  apiKey: process.env.VITE_FIREBASE_API_KEY || process.env.FIREBASE_API_KEY || (configData && configData.apiKey),
+  authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN || process.env.FIREBASE_AUTH_DOMAIN || (configData && configData.authDomain),
+  projectId: process.env.VITE_FIREBASE_PROJECT_ID || process.env.FIREBASE_PROJECT_ID || (configData && configData.projectId),
+  storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET || process.env.FIREBASE_STORAGE_BUCKET || (configData && configData.storageBucket),
+  messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || process.env.FIREBASE_MESSAGING_SENDER_ID || (configData && configData.messagingSenderId),
+  appId: process.env.VITE_FIREBASE_APP_ID || process.env.FIREBASE_APP_ID || (configData && configData.appId),
   firestoreDatabaseId: (configData && configData.firestoreDatabaseId) || "default"
 };
 
