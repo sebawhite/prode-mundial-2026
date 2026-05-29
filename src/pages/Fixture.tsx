@@ -5,7 +5,8 @@ import {
   getActiveUsers, 
   saveActivePredictions, 
   isBeforeDeadline,
-  calculateMatchPoints
+  calculateMatchPoints,
+  getActiveConfig
 } from '../lib/firebase';
 import { useWorldCupData } from '../hooks/useWorldCupData';
 import { Match } from '../data/seedData';
@@ -37,12 +38,9 @@ export const Fixture: React.FC<FixtureProps> = ({ onNavigate }) => {
   const timeoutsRef = useRef<Record<string, NodeJS.Timeout>>({});
 
   useEffect(() => {
-    // Check if groupStageDeadline is passed (June 10th 2026 23:59 UTC)
-    // For manual local time tests, we evaluate real time
+    // Check if groupStageDeadline is passed using config-based isBeforeDeadline
     const checkDeadline = () => {
-      const now = new Date().getTime();
-      const groupDeadline = new Date("2026-06-10T23:59:00Z").getTime();
-      setGroupDeadlinePassed(now > groupDeadline);
+      setGroupDeadlinePassed(!isBeforeDeadline("groups"));
     };
     checkDeadline();
     const interval = setInterval(checkDeadline, 10000);
