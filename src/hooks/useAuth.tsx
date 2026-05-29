@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { 
   getActiveUsers, 
   saveActiveUsers, 
@@ -124,13 +124,11 @@ export const compressImage = (file: File): Promise<string> => {
   });
 };
 
-// Flag global para mitigar condiciones de carrera durante el registro
-let isSigningUp = false;
-
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const isSigningUp = useRef(false);
 
   // Synchronize Firestore data dynamically in real time when authenticated
   useEffect(() => {
@@ -154,7 +152,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } else {
       fetchPublicConfig();
       const unsubscribe = auth.onAuthStateChanged(async (authUser: any) => {
-        if (isSigningUp) {
+        if (isSigningUp.current) {
           console.log("onAuthStateChanged: Registro en progreso, omitiendo auto-fetch para evitar condiciones de carrera.");
           return;
         }
@@ -412,7 +410,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }): Promise<UserProfile> => {
     setError(null);
     setLoading(true);
-    isSigningUp = true;
+    isSigningUp.current = true;
     try {
       const checkEmail = params.email.trim().toLowerCase();
       const isAdminEmail = checkEmail === "sebahotelmkt@gmail.com" || checkEmail === "felixblancovolpe@gmail.com";
@@ -523,7 +521,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setError(err.message);
       throw err;
     } finally {
-      isSigningUp = false;
+      isSigningUp.current = false;
       setLoading(false);
     }
   };
