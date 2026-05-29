@@ -1,15 +1,15 @@
 # PRODE Mundial 2026 ⚽🏆
 
-¡Bienvenido al código fuente de **PRODE Mundial 2026**! Esta es una Progressive Web App (PWA) diseñada y pulida especialmente para un círculo cerrado de **~50 a 100 participantes** (amigos, familiares y conocidos de la organización) para divertirse pronosticando marcadores exactos en la Copa del Mundo de la FIFA 2026 (USA, México, Canadá).
+¡Bienvenido al código fuente de **PRODE Mundial 2026**! Esta es una Progressive Web App (PWA) diseñada y pulida especialmente para un círculo cerrado de **~50 a 100 participantes** (amigos, familiares y conocidos de la organización) para divertirse pronosticando marcadores exactos en la Fase de Grupos de la Copa del Mundo de la FIFA 2026 (USA, México, Canadá).
 
 ---
 
 ## 🎯 Contexto e Impacto Social
 
 Este torneo está organizado por **Felix Blanco** en Buenos Aires. Tiene un fin doble: diversión competitiva y un propósito noble.
-- **Inscripción única (Buy-in):** $5.000 ARS.
-- **Comisión solidaria:** El **20%** de todo lo recaudado será donado de forma directa para sostener raciones de comida y útiles escolares de una humilde escuela necesitada de **Zanzíbar, Tanzania**.
-- **Pozo para Premios (80%):** Se distribuye íntegramente de forma transparente entre las 3 posiciones más altas en el ranking final de la siguiente forma:
+- **Inscripción única (Buy-in):** $6.000 ARS.
+- **Comisión solidaria (50%):** El **50%** de todo lo recaudado será donado de forma directa para sostener la compra de bancos de madera y raciones de comida de una escuela necesitada de **Zanzíbar, Tanzania** (**Wonderful School**).
+- **Pozo para Premios (50%):** El restante **50%** se distribuye íntegramente de forma transparente entre las 3 posiciones más altas en el ranking final de la siguiente forma:
   - **1° de la tabla:** 60% del pozo acumulado.
   - **2° de la tabla:** 25% del pozo acumulado.
   - **3° de la tabla:** 15% del pozo acumulado.
@@ -22,7 +22,7 @@ La interfaz de usuario ha sido profundamente pulida respetando un estilo **Carte
 - **Paleta de Colores de Época:** Fondo color papel crema antiguo envejecido (`#F4EAD5`), tinta negra carbón (`#2A1F17`), rojo lacre fuerte (`#C8442F`), y acentos dorados vintage (`#C89832`).
 - **Superposición de Grano SVG:** Simula la textura rugosa de papel poroso impreso.
 - **Detalles Tipográficos:** Combinación de fuentes Serif elegantes ("DM Serif Display") y Sans minimalista ("Space Grotesk" y "Inter") con espaciado amplio y tracking ajustado.
-- **Marcas de Registro:** Cruces de corte e identificación impresas impresas en los bordes de la pantalla.
+- **Marcas de Registro:** Cruces de corte e identificación impresas en los bordes de la pantalla.
 
 ---
 
@@ -36,7 +36,7 @@ Para garantizar que el sistema funcione perfectamente de forma local sin configu
 
 ## 🛠️ Instalación y Desarrollo Local
 
-Seguí estos pasos para clonar e iniciar el entorno de desarrollo local de Vite de forma rápida:
+Seguí estos pasos para clonar e instalar el entorno de desarrollo local de Vite de forma rápida:
 
 ### 1. Clonar el repositorio e instalar dependencias
 ```bash
@@ -92,16 +92,15 @@ Colocamos el archivo `firebase-applet-config.json` también en la raíz del proy
 }
 ```
 
-### 4. Sembrar (Seed) Partidos y Jugadores Top
-Para que la base de datos se llene automáticamente con los 104 partidos del Mundial 2026 oficiales y configures los códigos de invitación válidos por primera vez, ejecutá el script de siembra en tu terminal:
+### 4. Sembrar (Seed) Partidos
+Para que la base de datos se llene automáticamente con los 72 partidos de la Fase de Grupos del Mundial 2026 oficiales del fixture real y configures los códigos de invitación válidos por primera vez, ejecutá el script de siembra en tu terminal:
 
 ```bash
 node scripts/seed-firestore.js
 ```
 *Este comando creará automáticamente:*
 - La colección `config/settings` con los alias de MercadoPago, buy-ins y códigos de invitación iniciales (`YELCHO2026-A8F3K2`).
-- La colección `matches` con los 72 encuentros de Fase de Grupos y los 32 slots para Eliminatorias (16avos, Octavos, etc.).
-- La colección `players` con los 150 jugadores mundialistas para búsqueda fluida en las predicciones especiales.
+- La colección `matches` con los 72 encuentros oficiales de la Fase de Grupos.
 
 ### 5. Desplegar de Reglas de Seguridad
 Asegurá tu base de datos contra accesos no autorizados desplegando `firestore.rules`:
@@ -135,6 +134,5 @@ Por cuestiones de seguridad y sencillez, el email **`felixblancovolpe@gmail.com`
 
 ### Acciones Administrativas Disponibles:
 1. **Aprobación de Transferencias:** Verás el nombre real completo, email, nro de WhatsApp e indicación de pago de los registrados. Con un solo clic podés cambiar su estado a **Habilitado (Confirmado)** para liberarles el fixtures.
-2. **Resultados Oficiales:** Podrás cargar los resultados oficiales e indicar partidos como "Terminado". Al instante se recalculan los puntos de los ~100 participantes de forma automática y se reordena la tabla general.
+2. **Resultados Oficiales:** Podrás cargar los resultados oficiales e indicar partidos como "Terminado". Al instante se recalculan los puntos de los participantes de forma automática y se reordena la tabla general.
 3. **Generación de Códigos:** Podés ingresar nuevos códigos de invitación personalizados para que se agreguen a la lista de registros habilitados.
-4. **Liquidar Premios Especiales:** Una vez concluido el torneo, seleccioná al Goleador y MVP del torneo para repartir de forma transparente los bonus de +12 y +15 puntos.

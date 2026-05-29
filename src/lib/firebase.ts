@@ -147,11 +147,6 @@ function getOrInitStorage<T>(key: string, initialData: T): T {
 
 export function getActiveConfig() {
   const config = getOrInitStorage<any>(STORAGE_KEYS.CONFIG, INITIAL_CONFIG);
-  // Guarantee upgrade to the new 100% prize pool config
-  if (config && config.organizerCommission !== 0.00) {
-    config.organizerCommission = 0.00;
-    saveActiveConfig(config);
-  }
   return config;
 }
 
@@ -192,7 +187,7 @@ export function saveActiveMatches(matches: Match[]) {
 }
 
 // Recalculates user points based on final scores
-function recalculateAllScores(matches: Match[]) {
+export function recalculateAllScores(matches: Match[]) {
   const users = getOrInitStorage<any[]>(STORAGE_KEYS.USERS, []);
   const predictions = getOrInitStorage<any[]>(STORAGE_KEYS.PREDICTIONS, []);
   
@@ -234,8 +229,8 @@ function recalculateAllScores(matches: Match[]) {
     u.rank = index + 1;
   });
   
-  localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
   localStorage.setItem(STORAGE_KEYS.PREDICTIONS, JSON.stringify(predictions));
+  saveActiveUsers(users);
 }
 
 export function getActiveUsers(): any[] {

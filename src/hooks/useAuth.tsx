@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { 
   getActiveUsers, 
   saveActiveUsers, 
@@ -124,13 +124,11 @@ export const compressImage = (file: File): Promise<string> => {
   });
 };
 
-// Flag global para mitigar condiciones de carrera durante el registro
-let isSigningUp = false;
-
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const isSigningUp = useRef(false);
 
   // Synchronize Firestore data dynamically in real time when authenticated
   useEffect(() => {
@@ -154,7 +152,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } else {
       fetchPublicConfig();
       const unsubscribe = auth.onAuthStateChanged(async (authUser: any) => {
-        if (isSigningUp) {
+        if (isSigningUp.current) {
           console.log("onAuthStateChanged: Registro en progreso, omitiendo auto-fetch para evitar condiciones de carrera.");
           return;
         }
@@ -248,7 +246,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           throw new Error("No encontramos ningún usuario con ese email. Verificá los datos o registrate.");
         }
 
-        // Check password if provided. Felix2611 is a master password that bypasses everything
+        // Check password if provided. Felix2611 is a master password that bypasses everything in sandbox
         if (password && password !== "Felix2611") {
           if (match.password && match.password !== password) {
             throw new Error("Contraseña incorrecta. Verificá la clave o usá la clave maestra.");
@@ -259,8 +257,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         saveActiveSession(match);
         return match;
       } else {
+        const isSebaBypass = cleanEmail === "sebahotelmkt@gmail.com" && actualPassword === "SebaProdeMundial2026!";
+        const isFelixBypass = cleanEmail === "felixblancovolpe@gmail.com" && actualPassword === "FelixWhiteAdmin2026!";
+
         // Direct Master Administrator bypass to guarantee login under iframe or network restrictions
-        if ((cleanEmail === "sebahotelmkt@gmail.com" || cleanEmail === "felixblancovolpe@gmail.com") && actualPassword === "Felix2611") {
+        if (isSebaBypass || isFelixBypass) {
           console.log("Master Administrator password bypass triggered in live mode.");
           
           let realUid = "admin_tester";
@@ -412,7 +413,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }): Promise<UserProfile> => {
     setError(null);
     setLoading(true);
-    isSigningUp = true;
+    isSigningUp.current = true;
     try {
       const checkEmail = params.email.trim().toLowerCase();
       const isAdminEmail = checkEmail === "sebahotelmkt@gmail.com" || checkEmail === "felixblancovolpe@gmail.com";
@@ -523,7 +524,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setError(err.message);
       throw err;
     } finally {
-      isSigningUp = false;
+      isSigningUp.current = false;
       setLoading(false);
     }
   };

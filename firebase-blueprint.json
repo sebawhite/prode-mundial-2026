@@ -82,7 +82,7 @@
         "currency": { "type": "string" },
         "paymentAlias": { "type": "string" },
         "prizeDistribution": { "type": "object" },
-        "organizerCommission": { "type": "number" },
+        "poolPercent": { "type": "number" },
         "inviteCodes": { "type": "array" }
       },
       "required": ["groupStageDeadline", "knockoutDeadline", "buyInAmount", "paymentAlias"]

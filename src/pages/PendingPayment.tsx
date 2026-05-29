@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import Avatar from '../components/shared/Avatar';
+import { getActiveConfig } from '../lib/firebase';
 
 interface PendingPaymentProps {
   onNavigate: (view: string) => void;
@@ -12,6 +13,8 @@ export const PendingPayment: React.FC<PendingPaymentProps> = ({ onNavigate }) =>
   const [notified, setNotified] = useState(user.paymentNotified === true);
 
   if (!user) return null;
+
+  const config = getActiveConfig();
 
   const handleCopyAlias = () => {
     navigator.clipboard.writeText("yelcho.prode.mp");
@@ -29,7 +32,7 @@ export const PendingPayment: React.FC<PendingPaymentProps> = ({ onNavigate }) =>
   };
 
   // WhatsApp helper link
-  const whatsappUrl = `https://wa.me/5491158730193?text=Hola%20Felix,%20ya%20te%20transferí%20los%206.000%20Pesos%20para%20el%20Prode.%20Mi%20email%20de%20usuario%20es%20${encodeURIComponent(user.email)}`;
+  const whatsappUrl = `https://wa.me/5491158730193?text=Hola%20Felix,%20ya%20te%20transferí%20los%20${config.buyInAmount.toLocaleString('es-AR')}%20Pesos%20para%20el%20Prode.%20Mi%20email%20de%20usuario%20es%20${encodeURIComponent(user.email)}`;
 
   return (
     <div className="max-w-md mx-auto py-6 px-4">
@@ -53,7 +56,7 @@ export const PendingPayment: React.FC<PendingPaymentProps> = ({ onNavigate }) =>
         <div className="bg-brand-bg border-2 border-brand-ink p-4 rounded-md mb-4 space-y-3">
           <div className="flex justify-between items-center text-xs font-mono text-brand-ink">
             <span>Monto del Buy-in:</span>
-            <span className="font-bold text-sm text-brand-accent">6.000 Pesos</span>
+            <span className="font-bold text-sm text-brand-accent">{config.buyInAmount.toLocaleString('es-AR')} Pesos</span>
           </div>
           
           <div className="flex justify-between items-center text-xs font-mono text-brand-ink border-t border-brand-ink/10 pt-2">
@@ -89,7 +92,7 @@ export const PendingPayment: React.FC<PendingPaymentProps> = ({ onNavigate }) =>
               Mandale tu comprobante por <strong>WhatsApp</strong> para agilizar la habilitación.
             </li>
             <li>
-              Una vez que Felix verifique la acreditación de los 6.000 Pesos, se te desbloqueará tu dashboard automáticamente. No necesitás volver a registrarte.
+              Una vez que Felix verifique la acreditación de los {config.buyInAmount.toLocaleString('es-AR')} Pesos, se te desbloqueará tu dashboard automáticamente. No necesitás volver a registrarte.
             </li>
           </ol>
         </div>

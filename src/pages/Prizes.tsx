@@ -29,8 +29,8 @@ export const Prizes: React.FC<PrizesProps> = ({ onNavigate }) => {
   const pendingCount = users.filter(u => u.paymentStatus === "pending").length;
   
   const totalCollected = confirmedCount * config.buyInAmount;
-  const donationAmount = totalCollected * 0.50;
-  const netPrizePool = totalCollected * 0.50;
+  const donationAmount = totalCollected * (1 - config.poolPercent);
+  const netPrizePool = totalCollected * config.poolPercent;
 
   const schoolGoal = 300000;
   const schoolProgressPercent = Math.min(100, Math.round((donationAmount / schoolGoal) * 100));
@@ -94,17 +94,17 @@ export const Prizes: React.FC<PrizesProps> = ({ onNavigate }) => {
 
           <div className="space-y-3 font-mono text-xs text-brand-ink divide-y divide-brand-ink/10">
             <div className="flex justify-between py-2">
-              <span>🎟️ Recaudación Total ({confirmedCount} × $6.000):</span>
+              <span>🎟️ Recaudación Total ({confirmedCount} × ${config.buyInAmount.toLocaleString('es-AR')}):</span>
               <span className="font-bold">${totalCollected.toLocaleString('es-AR')} ARS</span>
             </div>
             
             <div className="flex justify-between py-2 text-brand-blue font-bold">
-              <span>🌍 Donación Solidaria Wonderful School (50%):</span>
+              <span>🌍 Donación Solidaria Wonderful School ({Math.round((1 - config.poolPercent) * 100)}%):</span>
               <span>${donationAmount.toLocaleString('es-AR')} ARS</span>
             </div>
 
             <div className="flex justify-between py-2 font-bold text-sm text-brand-accent border-t-2 border-brand-ink">
-              <span>🏆 Pozo Neto Final de Premios Ganadores (50%):</span>
+              <span>🏆 Pozo Neto Final de Premios Ganadores ({Math.round(config.poolPercent * 100)}%):</span>
               <span>${netPrizePool.toLocaleString('es-AR')} ARS</span>
             </div>
           </div>
@@ -140,7 +140,7 @@ export const Prizes: React.FC<PrizesProps> = ({ onNavigate }) => {
             </div>
 
             <p className="font-sans text-[10px] text-brand-ink-muted italic leading-normal">
-              💡 De cada inscripción de $6.000, <strong>$3.000 (50%)</strong> se reservan para esta causa escolar. ¡Con las firmas de todos ayudamos a equipar las aulas de los niños en Zanzíbar!
+              💡 De cada inscripción de ${config.buyInAmount.toLocaleString('es-AR')}, <strong>${(config.buyInAmount * (1 - config.poolPercent)).toLocaleString('es-AR')} ({Math.round((1 - config.poolPercent) * 100)}%)</strong> se reservan para esta causa escolar. ¡Con las firmas de todos ayudamos a equipar las aulas de los niños en Zanzíbar!
             </p>
           </div>
 
