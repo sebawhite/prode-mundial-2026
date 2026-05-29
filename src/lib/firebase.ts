@@ -294,7 +294,17 @@ export function getActiveUsers(): any[] {
       rank: 4
     }
   ];
-  return getOrInitStorage(STORAGE_KEYS.USERS, defaultUsers);
+  const users = getOrInitStorage(STORAGE_KEYS.USERS, defaultUsers);
+    
+    // Purge Sandbox Mock Users automatically in Live/Production mode to align with Firestore
+    if (!IS_SANDBOX) {
+      const realUsersOnly = users.filter((u: any) => u.uid && !u.uid.startsWith('user_') && u.uid !== 'admin_tester');
+      if (realUsersOnly.length !== users.length) {
+        localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(realUsersOnly));
+        return realUsersOnly;
+      }
+    }
+    return users;
 }
 
 export function saveActiveUsers(users: any[]) {
@@ -331,69 +341,80 @@ export function saveActiveSession(user: any | null) {
 
 export function getActivePredictions(): any[] {
   const existing = localStorage.getItem(STORAGE_KEYS.PREDICTIONS);
+  let preds = [];
   if (existing) {
-    return JSON.parse(existing);
+    preds = JSON.parse(existing);
+  } else {
+    // Prepopulate standard prediction values for rank users to make dashboard look rich
+    const defaults = [
+      { id: "user_pablo_match-1", userId: "user_pablo", matchId: "match-1", homeScore: 2, awayScore: 1, pointsEarned: 5 },
+      { id: "user_pablo_match-2", userId: "user_pablo", matchId: "match-2", homeScore: 1, awayScore: 1, pointsEarned: 3 },
+      { id: "user_marta_match-1", userId: "user_marta", matchId: "match-1", homeScore: 0, awayScore: 2, pointsEarned: 0 },
+      { id: "user_marta_match-2", userId: "user_marta", matchId: "match-2", homeScore: 1, awayScore: 1, pointsEarned: 3 }
+    ];
+
+    // Dynamically populate some predictions for the 3 mock users (Felix: ~55%, Pablo: ~42%, Marta: ~88%)
+    // to make the initial state look incredibly realistic and rich!
+    const matches = ALL_MATCHES; // 72 matches
+
+    // Felix: ~55% (40 matches)
+    for (let i = 0; i < 40; i++) {
+      const match = matches[i];
+      if (match) {
+        defaults.push({
+          id: `admin_tester_${match.id}`,
+          userId: "admin_tester",
+          matchId: match.id,
+          homeScore: (i % 3),
+          awayScore: ((i + 1) % 3),
+          pointsEarned: 0
+        });
+      }
+    }
+
+    // Pablo: ~42% (30 matches)
+    for (let i = 2; i < 30; i++) {
+      const match = matches[i];
+      if (match) {
+        defaults.push({
+          id: `user_pablo_${match.id}`,
+          userId: "user_pablo",
+          matchId: match.id,
+          homeScore: ((i + 1) % 3),
+          awayScore: (i % 3),
+          pointsEarned: 0
+        });
+      }
+    }
+
+    // Marta: ~88% (63 matches)
+    for (let i = 2; i < 63; i++) {
+      const match = matches[i];
+      if (match) {
+        defaults.push({
+          id: `user_marta_${match.id}`,
+          userId: "user_marta",
+          matchId: match.id,
+          homeScore: (i % 3),
+          awayScore: ((i + 2) % 3),
+          pointsEarned: 0
+        });
+      }
+    }
+
+    localStorage.setItem(STORAGE_KEYS.PREDICTIONS, JSON.stringify(defaults));
+    preds = defaults;
   }
 
-  // Prepopulate standard prediction values for rank users to make dashboard look rich
-  const defaults = [
-    { id: "user_pablo_match-1", userId: "user_pablo", matchId: "match-1", homeScore: 2, awayScore: 1, pointsEarned: 5 },
-    { id: "user_pablo_match-2", userId: "user_pablo", matchId: "match-2", homeScore: 1, awayScore: 1, pointsEarned: 3 },
-    { id: "user_marta_match-1", userId: "user_marta", matchId: "match-1", homeScore: 0, awayScore: 2, pointsEarned: 0 },
-    { id: "user_marta_match-2", userId: "user_marta", matchId: "match-2", homeScore: 1, awayScore: 1, pointsEarned: 3 }
-  ];
-
-  // Dynamically populate some predictions for the 3 mock users (Felix: ~55%, Pablo: ~42%, Marta: ~88%)
-  // to make the initial state look incredibly realistic and rich!
-  const matches = ALL_MATCHES; // 72 matches
-
-  // Felix: ~55% (40 matches)
-  for (let i = 0; i < 40; i++) {
-    const match = matches[i];
-    if (match) {
-      defaults.push({
-        id: `admin_tester_${match.id}`,
-        userId: "admin_tester",
-        matchId: match.id,
-        homeScore: (i % 3),
-        awayScore: ((i + 1) % 3),
-        pointsEarned: 0
-      });
+  // Purge Sandbox Mock Predictions automatically in Live/Production mode to align with Firestore
+  if (!IS_SANDBOX) {
+    const realPredsOnly = preds.filter((p: any) => p.userId && !p.userId.startsWith('user_') && p.userId !== 'admin_tester');
+    if (realPredsOnly.length !== preds.length) {
+      localStorage.setItem(STORAGE_KEYS.PREDICTIONS, JSON.stringify(realPredsOnly));
+      return realPredsOnly;
     }
   }
-
-  // Pablo: ~42% (30 matches)
-  for (let i = 2; i < 30; i++) {
-    const match = matches[i];
-    if (match) {
-      defaults.push({
-        id: `user_pablo_${match.id}`,
-        userId: "user_pablo",
-        matchId: match.id,
-        homeScore: ((i + 1) % 3),
-        awayScore: (i % 3),
-        pointsEarned: 0
-      });
-    }
-  }
-
-  // Marta: ~88% (63 matches)
-  for (let i = 2; i < 63; i++) {
-    const match = matches[i];
-    if (match) {
-      defaults.push({
-        id: `user_marta_${match.id}`,
-        userId: "user_marta",
-        matchId: match.id,
-        homeScore: (i % 3),
-        awayScore: ((i + 2) % 3),
-        pointsEarned: 0
-      });
-    }
-  }
-
-  localStorage.setItem(STORAGE_KEYS.PREDICTIONS, JSON.stringify(defaults));
-  return defaults;
+  return preds;
 }
 
 export function saveActivePredictions(preds: any[]) {
