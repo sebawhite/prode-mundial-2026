@@ -104,6 +104,16 @@ export const Login: React.FC<LoginProps> = ({ onNavigate }) => {
               className="w-full text-base border-2 border-brand-ink p-2 rounded bg-brand-bg font-sans focus:outline-none focus:ring-2 focus:ring-brand-accent focus:bg-brand-bg"
               placeholder="******"
             />
+            <div className="text-right pt-1.5">
+              <a 
+                href={`https://wa.me/5491158730193?text=Hola%20Felix,%20olvid%C3%A9%20mi%20contrase%C3%B1a%20del%20Prode.%20Mi%20email%20de%20usuario%20es:%20${encodeURIComponent(email || '[escribí tu email acá]')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[10px] font-mono font-bold uppercase underline text-brand-ink-muted hover:text-brand-accent transition-colors"
+              >
+                ¿Olvidaste tu contraseña? 💬
+              </a>
+            </div>
           </div>
 
           <button
