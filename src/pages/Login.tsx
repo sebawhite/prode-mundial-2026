@@ -13,6 +13,13 @@ export const Login: React.FC<LoginProps> = ({ onNavigate }) => {
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const handleForgotPassword = () => {
+    const emailText = email ? ` Mi email es: ${email.trim()}` : "";
+    const text = `Hola Felix, me olvidé mi contraseña del Prode.${emailText}`;
+    const url = `https://wa.me/5491158730193?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
@@ -79,8 +86,15 @@ export const Login: React.FC<LoginProps> = ({ onNavigate }) => {
           </div>
 
           <div>
-            <label className="block text-xs font-mono font-bold uppercase mb-1 text-brand-ink">
-              Contraseña
+            <label className="block text-xs font-mono font-bold uppercase mb-1 text-brand-ink flex justify-between items-center">
+              <span>Contraseña</span>
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                className="text-[10px] font-mono normal-case underline text-brand-accent hover:text-brand-accent/80 cursor-pointer"
+              >
+                ¿Olvidé mi contraseña? 💬
+              </button>
             </label>
             <input
               type="password"
