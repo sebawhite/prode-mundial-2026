@@ -255,8 +255,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Direct Master Administrator bypass to guarantee login under iframe or network restrictions
         if ((cleanEmail === "sebahotelmkt@gmail.com" || cleanEmail === "felixblancovolpe@gmail.com") && actualPassword === "Felix2611") {
           console.log("Master Administrator password bypass triggered in live mode.");
+          
+          let realUid = "admin_tester";
+          if (auth) {
+            try {
+              const credentials = await signInWithEmailAndPassword(auth, cleanEmail, actualPassword);
+              realUid = credentials.user.uid;
+              console.log("   • [Auth Admin OK] Autenticado en Firebase Auth, UID real:", realUid);
+            } catch (authErr: any) {
+              console.warn("   • [Auth Admin Retry] Falló login inicial. Creando cuenta...", authErr.message);
+              try {
+                const credentials = await createUserWithEmailAndPassword(auth, cleanEmail, actualPassword);
+                realUid = credentials.user.uid;
+                console.log("   • [Auth Admin OK] Cuenta de administrador creada, UID real:", realUid);
+              } catch (createErr: any) {
+                console.error("   • [Auth Admin Error] Falló auto-creación:", createErr.message);
+              }
+            }
+          }
+
           const adminProfile: UserProfile = {
-            uid: "admin_tester",
+            uid: realUid,
             fullName: "Felix Blanco",
             nickname: "Felixwhite",
             email: cleanEmail,
@@ -272,7 +291,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           
           if (db) {
             try {
-              await setDoc(doc(db, "users", "admin_tester"), adminProfile);
+              await setDoc(doc(db, "users", realUid), adminProfile);
             } catch (fsErr) {
               console.warn("Failed to save bypassed admin profile to live Firestore, continuing with local session:", fsErr);
             }
