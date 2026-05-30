@@ -284,19 +284,17 @@ export const Fixture: React.FC<FixtureProps> = ({ onNavigate }) => {
         </div>
       </div>
 
-      {/* Real-time Sync Status Indicator */}
+      {/* Fixture Status Indicator — non-alarming for end users.
+          The remote fetch is best-effort; if it fails we silently use the local fixture
+          (public/worldcup.json) which has the same 72 group-stage matches. */}
       <div className="bg-brand-card p-3 rounded-lg retro-border retro-shadow flex items-center justify-between text-xs font-mono">
-        {loading ? (
+        {loading && matches.length === 0 ? (
           <span className="text-brand-blue flex items-center gap-2 animate-pulse font-bold">
-            🔄 Sincronizando con fixture oficial de la FIFA 2026 en tiempo real...
-          </span>
-        ) : error ? (
-          <span className="text-brand-accent flex items-center gap-2 font-medium">
-            ⚠️ No se pudo conectar al servidor oficial del Mundial. Usando fixture local de respaldo.
+            🔄 Cargando fixture del Mundial 2026...
           </span>
         ) : (
           <span className="text-brand-win flex items-center gap-2 font-bold">
-            ✅ Conectado a openfootball/worldcup.json (Fixture Real Mundial 2026)
+            ✅ Fixture del Mundial 2026 cargado (72 partidos · Fase de Grupos)
           </span>
         )}
       </div>
