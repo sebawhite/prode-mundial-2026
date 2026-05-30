@@ -184,8 +184,13 @@ export async function fetchWorldCup2026Matches(): Promise<Match[]> {
   const groupStageMapped = mappedMatches.filter(m => m.group !== undefined);
 
   // Align IDs with local ALL_MATCHES to keep predictions connected.
-  // CRITICAL: matches that cannot be aligned are DROPPED instead of returned
-  // with the temporary `match-api-N` id. Otherwise saveActiveMatches() would
+  // We align by teams + group ONLY (NOT matchday): openfootball uses a
+  // global matchday 1..72 across the whole tournament, while local
+  // ALL_MATCHES uses per-group matchday 1, 2 or 3. Two teams only meet
+  // once in the group stage, so (homeTeam, awayTeam, group) is unique.
+  //
+  // If a match cannot be aligned, we DROP it instead of returning it with
+  // a temporary `match-api-N` id. Otherwise saveActiveMatches() would
   // persist those temporary ids to Firestore and create orphan documents
   // (we found 70 of those orphans in production on 2026-05-30).
   const finalizedMatches: Match[] = [];
@@ -194,19 +199,21 @@ export async function fetchWorldCup2026Matches(): Promise<Match[]> {
       const sameTeams =
         (local.homeTeam.code === apiMatch.homeTeam.code && local.awayTeam.code === apiMatch.awayTeam.code) ||
         (local.homeTeam.code === apiMatch.awayTeam.code && local.awayTeam.code === apiMatch.homeTeam.code);
-      return sameTeams && local.group === apiMatch.group && local.matchday === apiMatch.matchday;
+      return sameTeams && local.group === apiMatch.group;
     });
 
     if (alignedLocal) {
       finalizedMatches.push({
         ...apiMatch,
-        id: alignedLocal.id
+        id: alignedLocal.id,
+        // Keep the local per-group matchday (1..3) so filters work correctly
+        matchday: alignedLocal.matchday
       });
     } else {
       console.warn(
         `[worldcupApi] Dropping unaligned match:`,
         apiMatch.homeTeam.code, 'vs', apiMatch.awayTeam.code,
-        '· group', apiMatch.group, '· matchday', apiMatch.matchday
+        '· group', apiMatch.group
       );
     }
   }
