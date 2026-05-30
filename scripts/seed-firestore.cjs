@@ -221,13 +221,13 @@ async function runSeeder() {
     console.log("🔑 Autenticando credenciales de Administrador Maestro...");
     const auth = getAuth(app);
     try {
-      await signInWithEmailAndPassword(auth, "felixblancovolpe@gmail.com", "FelixWhiteAdmin2026!");
+      await signInWithEmailAndPassword(auth, "felixblancovolpe@gmail.com", "Matata2026");
       console.log("   • [OK] Conectado como felixblancovolpe@gmail.com (Acceso Admin)");
     } catch (authErr) {
       if (authErr.code === 'auth/user-not-found' || authErr.code === 'auth/invalid-credential' || authErr.message.includes('credential')) {
         try {
           console.log("   • [INFO] Cuenta de admin no encontrada en Auth. Creando registro...");
-          await createUserWithEmailAndPassword(auth, "felixblancovolpe@gmail.com", "FelixWhiteAdmin2026!");
+          await createUserWithEmailAndPassword(auth, "felixblancovolpe@gmail.com", "Matata2026");
           console.log("   • [OK] Cuenta de administrador creada e iniciada con éxito!");
         } catch (createErr) {
           console.warn("   • [ALERTA] No se pudo crear la cuenta de administrador. Continuando sin auth por si las reglas de Firestore son abiertas:", createErr.message);

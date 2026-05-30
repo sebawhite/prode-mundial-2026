@@ -3,6 +3,8 @@ import {createRoot} from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 
+import { ErrorBoundary } from './components/ErrorBoundary.tsx';
+
 // Register service worker for Progressive Web App support
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
@@ -14,6 +16,8 @@ if ('serviceWorker' in navigator) {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
   </StrictMode>,
 );
