@@ -294,7 +294,7 @@ export const Fixture: React.FC<FixtureProps> = ({ onNavigate }) => {
           </span>
         ) : (
           <span className="text-brand-win flex items-center gap-2 font-bold">
-            ✅ Fixture del Mundial 2026 cargado (72 partidos · Fase de Grupos)
+            ✅ Fixture del Mundial 2026 cargado ({matches.filter(m => m.stage === "groups").length} partidos · Fase de Grupos)
           </span>
         )}
       </div>

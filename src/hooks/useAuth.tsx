@@ -142,6 +142,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [user]);
 
+  // Refresh the React `user` state whenever the /users realtime listener
+  // pushes a new snapshot. This is what makes a participant see "Confirmado"
+  // automatically as soon as the admin approves their payment, without a
+  // page refresh. Without this effect, the localStorage cache updates but
+  // the React-held `user` object stays stale until next login.
+  useEffect(() => {
+    if (!user) return;
+    const handleSync = () => {
+      const users = getActiveUsers();
+      const fresh = users.find((u: any) => u.uid === user.uid);
+      if (fresh) {
+        // Cheap shallow compare on the fields most likely to change. Avoid
+        // calling setUser unnecessarily so we don't trigger render loops.
+        const changed =
+          fresh.paymentStatus !== user.paymentStatus ||
+          fresh.isAdmin !== user.isAdmin ||
+          fresh.totalPoints !== user.totalPoints ||
+          fresh.rank !== user.rank ||
+          fresh.completionPercent !== user.completionPercent;
+        if (changed) {
+          setUser(fresh);
+          saveActiveSession(fresh);
+        }
+      }
+    };
+    window.addEventListener('prode_data_updated', handleSync);
+    return () => window.removeEventListener('prode_data_updated', handleSync);
+  }, [user]);
+
   useEffect(() => {
     if (IS_SANDBOX) {
       const session = getActiveSession();
