@@ -133,7 +133,8 @@ service cloud.firestore {
     match /predictions/{predictionId} {
 
       allow read: if isSignedIn() && (
-        resource == null
+        isAdmin()
+        || resource == null
         || resource.data.userId == request.auth.uid
         || !isBeforeGroupDeadline()
       );

@@ -183,25 +183,33 @@ export async function fetchWorldCup2026Matches(): Promise<Match[]> {
   // Filter only Group Stage matches (where m.group is defined) so that knockouts/playoffs are not included
   const groupStageMapped = mappedMatches.filter(m => m.group !== undefined);
 
-  // Align IDs with local ALL_MATCHES to keep predictions connected
-  const finalizedMatches = groupStageMapped.map(apiMatch => {
-    // Try to find the matching game in local predefined ALL_MATCHES list
+  // Align IDs with local ALL_MATCHES to keep predictions connected.
+  // CRITICAL: matches that cannot be aligned are DROPPED instead of returned
+  // with the temporary `match-api-N` id. Otherwise saveActiveMatches() would
+  // persist those temporary ids to Firestore and create orphan documents
+  // (we found 70 of those orphans in production on 2026-05-30).
+  const finalizedMatches: Match[] = [];
+  for (const apiMatch of groupStageMapped) {
     const alignedLocal = ALL_MATCHES.find(local => {
-      const sameTeams = 
+      const sameTeams =
         (local.homeTeam.code === apiMatch.homeTeam.code && local.awayTeam.code === apiMatch.awayTeam.code) ||
         (local.homeTeam.code === apiMatch.awayTeam.code && local.awayTeam.code === apiMatch.homeTeam.code);
       return sameTeams && local.group === apiMatch.group && local.matchday === apiMatch.matchday;
     });
 
     if (alignedLocal) {
-      return {
+      finalizedMatches.push({
         ...apiMatch,
-        id: alignedLocal.id // High priority: maintain predefined identifier to avoid breaking local predictions
-      };
+        id: alignedLocal.id
+      });
+    } else {
+      console.warn(
+        `[worldcupApi] Dropping unaligned match:`,
+        apiMatch.homeTeam.code, 'vs', apiMatch.awayTeam.code,
+        '· group', apiMatch.group, '· matchday', apiMatch.matchday
+      );
     }
-    
-    return apiMatch;
-  });
+  }
 
   return finalizedMatches;
 }
