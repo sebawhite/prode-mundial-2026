@@ -165,17 +165,25 @@ service cloud.firestore {
     // ─────────────────────────────────────────────────────────────
 
     function isValidUserOnCreate(data) {
+      // Admins must be able to auto-bootstrap their own profile with
+      // paymentStatus='confirmed' and isAdmin=true on first login. Regular
+      // users must enter as paymentStatus='pending', isAdmin=false.
+      // The email check is safe because request.auth.token.email is set by
+      // Firebase Auth — only the real owner of the address can pass it.
+      let isAdminEmail = request.auth.token.email == 'sebahotelmkt@gmail.com'
+                         || request.auth.token.email == 'felixblancovolpe@gmail.com';
+
       return data.keys().hasAll(['fullName', 'email', 'paymentStatus', 'createdAt', 'uid'])
              && data.fullName is string
              && data.fullName.size() >= 3 && data.fullName.size() <= 100
              && data.email is string
              && data.email.size() >= 3 && data.email.size() <= 100
              && data.uid == request.auth.uid
-             // Security-critical: paymentStatus MUST be 'pending' on create
-             && data.paymentStatus == 'pending'
-             // Security-critical: isAdmin MUST be false or absent on create
-             && (!data.keys().hasAny(['isAdmin']) || data.isAdmin == false)
-             // Points MUST be 0 or absent on create
+             // paymentStatus: pending for regular users, may be 'confirmed' for admin bootstrap
+             && (isAdminEmail || data.paymentStatus == 'pending')
+             // isAdmin: false/absent for regular users, may be true for admin bootstrap
+             && (isAdminEmail || !data.keys().hasAny(['isAdmin']) || data.isAdmin == false)
+             // Points MUST be 0 or absent on create (applies to everyone, even admin)
              && (!data.keys().hasAny(['totalPoints']) || data.totalPoints == 0);
     }
 
