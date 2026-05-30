@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { getFirestore, doc, getDoc, getDocs, setDoc, updateDoc, collection, query, where, onSnapshot, getDocFromServer } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, collection, query, where, onSnapshot, getDocFromServer } from 'firebase/firestore';
 import firebaseConfig from '../../firebase-applet-config.json';
 import { ALL_MATCHES, TOP_PLAYERS, INITIAL_CONFIG, Match, Player } from '../data/seedData';
 
@@ -317,6 +317,16 @@ export function saveActiveUsers(users: any[]) {
         }
       }
     });
+  }
+}
+
+export async function deleteUserDoc(uid: string) {
+  if (!IS_SANDBOX && db) {
+    try {
+      await deleteDoc(doc(db, "users", uid));
+    } catch (err) {
+      console.error(`Error deleting user ${uid} from Firestore:`, err);
+    }
   }
 }
 

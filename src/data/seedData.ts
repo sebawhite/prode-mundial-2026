@@ -136,7 +136,19 @@ const findTeamByName = (name: string): Team => {
 
 function parseMatchDate(dateStr: string, timeStr?: string): string {
   try {
-    if (timeStr) {
+    if (timeStr && timeStr !== "TBD" && !timeStr.includes("TBD")) {
+      // Check if it's in the new ART format: "16:00 ART"
+      const artMatch = timeStr.match(/^(\d{1,2}):(\d{2})\s+ART$/i);
+      if (artMatch) {
+        const hh = artMatch[1].padStart(2, '0');
+        const mm = artMatch[2];
+        const combined = `${dateStr}T${hh}:${mm}:00-03:00`;
+        const d = new Date(combined);
+        // Retornamos el string con el offset explícito en lugar de usar toISOString() que fuerza la 'Z'
+        if (!isNaN(d.getTime())) return combined;
+      }
+
+      // Legacy UTC logic
       const timeClean = timeStr.replace(/UTC/i, "").trim();
       const combined = `${dateStr}T${timeClean}`;
       const d = new Date(combined);
@@ -144,7 +156,9 @@ function parseMatchDate(dateStr: string, timeStr?: string): string {
         return d.toISOString();
       }
     }
-    const fallbackD = new Date(dateStr);
+    // If no valid time, default to 12:00 PM UTC for that date
+    const combinedFallback = `${dateStr}T12:00:00Z`;
+    const fallbackD = new Date(combinedFallback);
     if (!isNaN(fallbackD.getTime())) {
       return fallbackD.toISOString();
     }
@@ -221,12 +235,16 @@ export const generateKnockoutMatches = (): Match[] => {
     daysOffset: number,
     venue: string
   ): Match => {
-    const date = new Date("2026-06-28T16:00:00Z");
-    date.setDate(date.getDate() + daysOffset);
+    // 28 de junio de 2026, por defecto le ponemos las 16:00 ART
+    const baseDate = new Date("2026-06-28T00:00:00Z");
+    baseDate.setDate(baseDate.getDate() + daysOffset);
+    const dateStr = baseDate.toISOString().slice(0, 10);
+    const explicitDate = `${dateStr}T16:00:00-03:00`;
+    
     return {
       id: `match-${idCounter++}`,
       stage,
-      date: date.toISOString(),
+      date: explicitDate,
       homeTeam: { code: hCode, name: hName, flag: "🏳️", placeholder: true },
       awayTeam: { code: aCode, name: aName, flag: "🏳️", placeholder: true },
       homeScore: null,
@@ -375,7 +393,7 @@ export const INITIAL_CONFIG = {
   knockoutDeadline: "2026-06-27T23:59:00Z",
   buyInAmount: 6000,
   currency: "ARS",
-  paymentAlias: "yelcho.prode.mp",
+  paymentAlias: "felix.prode",
   prizeDistribution: { first: 0.60, second: 0.25, third: 0.15 },
   poolPercent: 0.50,
   inviteCodes: ["YELCHO2026-A8F3K2", "YELCHO2026-XYZ", "YELCHO2026-PRODE", "YELCHO2026-MUNDIAL"]

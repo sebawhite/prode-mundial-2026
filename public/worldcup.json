@@ -3,107 +3,107 @@
   "matches": [
     {
       "round": "Matchday 1",
-      "date": "2026-06-12",
-      "time": "19:00 UTC",
+      "date": "2026-06-11",
+      "time": "16:00 ART",
       "team1": "México",
       "team2": "Sudáfrica",
       "group": "Group A",
-      "ground": "MetLife, NY"
+      "ground": "Estadio Azteca, Mexico City"
     },
     {
       "round": "Matchday 1",
-      "date": "2026-06-13",
-      "time": "23:00 UTC",
+      "date": "2026-06-11",
+      "time": "23:00 ART",
       "team1": "Corea del Sur",
       "team2": "Rep. Checa",
       "group": "Group A",
-      "ground": "SoFi, LA"
+      "ground": "Estadio Akron, Zapopan"
     },
     {
-      "round": "Matchday 2",
-      "date": "2026-06-14",
-      "time": "15:00 UTC",
+      "round": "Matchday 1",
+      "date": "2026-06-18",
+      "time": "13:00 ART",
+      "team1": "Rep. Checa",
+      "team2": "Sudáfrica",
+      "group": "Group A",
+      "ground": "Mercedes-Benz Stadium, Atlanta"
+    },
+    {
+      "round": "Matchday 1",
+      "date": "2026-06-18",
+      "time": "22:00 ART",
       "team1": "México",
       "team2": "Corea del Sur",
       "group": "Group A",
-      "ground": "BC Place, Vancouver"
+      "ground": "Estadio Akron, Zapopan"
     },
     {
-      "round": "Matchday 2",
-      "date": "2026-06-15",
-      "time": "19:00 UTC",
-      "team1": "Sudáfrica",
-      "team2": "Rep. Checa",
-      "group": "Group A",
-      "ground": "Mercedes-Benz, Atlanta"
-    },
-    {
-      "round": "Matchday 3",
-      "date": "2026-06-16",
-      "time": "23:00 UTC",
+      "round": "Matchday 1",
+      "date": "2026-06-24",
+      "time": "22:00 ART",
       "team1": "Rep. Checa",
       "team2": "México",
       "group": "Group A",
-      "ground": "Hard Rock, Miami"
+      "ground": "Estadio Azteca, Mexico City"
     },
     {
-      "round": "Matchday 3",
-      "date": "2026-06-17",
-      "time": "15:00 UTC",
+      "round": "Matchday 1",
+      "date": "2026-06-24",
+      "time": "22:00 ART",
       "team1": "Sudáfrica",
       "team2": "Corea del Sur",
       "group": "Group A",
-      "ground": "Gillette, Boston"
+      "ground": "Estadio BBVA, Guadalupe"
     },
     {
       "round": "Matchday 1",
-      "date": "2026-06-18",
-      "time": "19:00 UTC",
+      "date": "2026-06-12",
+      "time": "16:00 ART",
       "team1": "Canadá",
       "team2": "Bosnia y H.",
       "group": "Group B",
-      "ground": "AT&T, Dallas"
+      "ground": "BMO Field, Toronto"
     },
     {
       "round": "Matchday 1",
-      "date": "2026-06-19",
-      "time": "23:00 UTC",
+      "date": "2026-06-13",
+      "time": "16:00 ART",
       "team1": "Qatar",
       "team2": "Suiza",
       "group": "Group B",
-      "ground": "Arrowhead, KC"
+      "ground": "Levi's Stadium, Santa Clara"
     },
     {
-      "round": "Matchday 2",
-      "date": "2026-06-20",
-      "time": "15:00 UTC",
+      "round": "Matchday 1",
+      "date": "2026-06-18",
+      "time": "16:00 ART",
+      "team1": "Suiza",
+      "team2": "Bosnia y H.",
+      "group": "Group B",
+      "ground": "SoFi Stadium, Inglewood"
+    },
+    {
+      "round": "Matchday 1",
+      "date": "2026-06-18",
+      "time": "19:00 ART",
       "team1": "Canadá",
       "team2": "Qatar",
       "group": "Group B",
-      "ground": "NRG, Houston"
+      "ground": "BC Place, Vancouver"
     },
     {
-      "round": "Matchday 2",
-      "date": "2026-06-21",
-      "time": "19:00 UTC",
-      "team1": "Bosnia y H.",
-      "team2": "Suiza",
-      "group": "Group B",
-      "ground": "Lincoln Financial, Philly"
-    },
-    {
-      "round": "Matchday 3",
-      "date": "2026-06-22",
-      "time": "23:00 UTC",
+      "round": "Matchday 1",
+      "date": "2026-06-24",
+      "time": "16:00 ART",
       "team1": "Suiza",
       "team2": "Canadá",
       "group": "Group B",
-      "ground": "Levi's, SF"
+      "ground": "BC Place, Vancouver"
     },
     {
-      "round": "Matchday 3",
-      "date": "2026-06-23",
-      "time": "15:00 UTC",
+      "round": "Matchday 1",
+      "date": "2026-06-24",
+      "time": "16:00 ART",
       "team1": "Bosnia y H.",
       "team2": "Qatar",
       "group": "Group B",
@@ -111,799 +111,543 @@
     },
     {
       "round": "Matchday 1",
-      "date": "2026-06-24",
-      "time": "19:00 UTC",
+      "date": "2026-06-13",
+      "time": "19:00 ART",
       "team1": "Brasil",
       "team2": "Marruecos",
       "group": "Group C",
-      "ground": "Akron, Guadalajara"
+      "ground": "MetLife Stadium, East Rutherford"
     },
     {
       "round": "Matchday 1",
-      "date": "2026-06-25",
-      "time": "23:00 UTC",
+      "date": "2026-06-13",
+      "time": "22:00 ART",
       "team1": "Haití",
       "team2": "Escocia",
       "group": "Group C",
-      "ground": "BBVA, Monterrey"
+      "ground": "Gillette Stadium, Foxborough"
     },
     {
-      "round": "Matchday 2",
-      "date": "2026-06-26",
-      "time": "15:00 UTC",
+      "round": "Matchday 1",
+      "date": "2026-06-19",
+      "time": "19:00 ART",
+      "team1": "Escocia",
+      "team2": "Marruecos",
+      "group": "Group C",
+      "ground": "Gillette Stadium, Foxborough"
+    },
+    {
+      "round": "Matchday 1",
+      "date": "2026-06-19",
+      "time": "21:30 ART",
       "team1": "Brasil",
       "team2": "Haití",
       "group": "Group C",
-      "ground": "Azteca, CDMX"
+      "ground": "Lincoln Financial Field, Philadelphia"
     },
     {
-      "round": "Matchday 2",
-      "date": "2026-06-11",
-      "time": "19:00 UTC",
-      "team1": "Marruecos",
-      "team2": "Escocia",
-      "group": "Group C",
-      "ground": "MetLife, NY"
-    },
-    {
-      "round": "Matchday 3",
-      "date": "2026-06-12",
-      "time": "23:00 UTC",
+      "round": "Matchday 1",
+      "date": "2026-06-24",
+      "time": "19:00 ART",
       "team1": "Escocia",
       "team2": "Brasil",
       "group": "Group C",
-      "ground": "SoFi, LA"
+      "ground": "Hard Rock Stadium, Miami Gardens"
     },
     {
-      "round": "Matchday 3",
-      "date": "2026-06-13",
-      "time": "15:00 UTC",
+      "round": "Matchday 1",
+      "date": "2026-06-24",
+      "time": "19:00 ART",
       "team1": "Marruecos",
       "team2": "Haití",
       "group": "Group C",
-      "ground": "BC Place, Vancouver"
+      "ground": "Mercedes-Benz Stadium, Atlanta"
     },
     {
       "round": "Matchday 1",
-      "date": "2026-06-14",
-      "time": "19:00 UTC",
+      "date": "2026-06-12",
+      "time": "22:00 ART",
       "team1": "Estados Unidos",
       "team2": "Paraguay",
       "group": "Group D",
-      "ground": "Mercedes-Benz, Atlanta"
+      "ground": "SoFi Stadium, Inglewood"
     },
     {
       "round": "Matchday 1",
-      "date": "2026-06-15",
-      "time": "23:00 UTC",
+      "date": "2026-06-14",
+      "time": "01:00 ART",
       "team1": "Australia",
       "team2": "Turquía",
       "group": "Group D",
-      "ground": "Hard Rock, Miami"
+      "ground": "BC Place, Vancouver"
     },
     {
-      "round": "Matchday 2",
-      "date": "2026-06-16",
-      "time": "15:00 UTC",
+      "round": "Matchday 1",
+      "date": "2026-06-19",
+      "time": "16:00 ART",
       "team1": "Estados Unidos",
       "team2": "Australia",
       "group": "Group D",
-      "ground": "Gillette, Boston"
+      "ground": "Lumen Field, Seattle"
     },
     {
-      "round": "Matchday 2",
-      "date": "2026-06-17",
-      "time": "19:00 UTC",
-      "team1": "Paraguay",
-      "team2": "Turquía",
+      "round": "Matchday 1",
+      "date": "2026-06-20",
+      "time": "00:00 ART",
+      "team1": "Turquía",
+      "team2": "Paraguay",
       "group": "Group D",
-      "ground": "AT&T, Dallas"
+      "ground": "Levi's Stadium, Santa Clara"
     },
     {
-      "round": "Matchday 3",
-      "date": "2026-06-18",
-      "time": "23:00 UTC",
+      "round": "Matchday 1",
+      "date": "2026-06-25",
+      "time": "23:00 ART",
       "team1": "Turquía",
       "team2": "Estados Unidos",
       "group": "Group D",
-      "ground": "Arrowhead, KC"
+      "ground": "SoFi Stadium, Inglewood"
     },
     {
-      "round": "Matchday 3",
-      "date": "2026-06-19",
-      "time": "15:00 UTC",
+      "round": "Matchday 1",
+      "date": "2026-06-25",
+      "time": "23:00 ART",
       "team1": "Paraguay",
       "team2": "Australia",
       "group": "Group D",
-      "ground": "NRG, Houston"
+      "ground": "Levi's Stadium, Santa Clara"
     },
     {
-      "round": "Matchday 1",
-      "date": "2026-06-20",
-      "time": "19:00 UTC",
+      "round": "Matchday 2",
+      "date": "2026-06-14",
+      "time": "14:00 ART",
       "team1": "Alemania",
       "team2": "Curazao",
       "group": "Group E",
-      "ground": "Lincoln Financial, Philly"
+      "ground": "NRG Stadium, Houston"
     },
     {
-      "round": "Matchday 1",
-      "date": "2026-06-21",
-      "time": "23:00 UTC",
+      "round": "Matchday 2",
+      "date": "2026-06-14",
+      "time": "20:00 ART",
       "team1": "Costa de Marfil",
       "team2": "Ecuador",
       "group": "Group E",
-      "ground": "Levi's, SF"
+      "ground": "Lincoln Financial Field, Philadelphia"
     },
     {
       "round": "Matchday 2",
-      "date": "2026-06-22",
-      "time": "15:00 UTC",
+      "date": "2026-06-20",
+      "time": "17:00 ART",
       "team1": "Alemania",
       "team2": "Costa de Marfil",
       "group": "Group E",
-      "ground": "Lumen Field, Seattle"
+      "ground": "BMO Field, Toronto"
     },
     {
       "round": "Matchday 2",
-      "date": "2026-06-23",
-      "time": "19:00 UTC",
-      "team1": "Curazao",
-      "team2": "Ecuador",
-      "group": "Group E",
-      "ground": "Akron, Guadalajara"
-    },
-    {
-      "round": "Matchday 3",
-      "date": "2026-06-24",
-      "time": "23:00 UTC",
+      "date": "2026-06-20",
+      "time": "21:00 ART",
       "team1": "Ecuador",
-      "team2": "Alemania",
+      "team2": "Curazao",
       "group": "Group E",
-      "ground": "BBVA, Monterrey"
+      "ground": "Arrowhead Stadium, Kansas City"
     },
     {
-      "round": "Matchday 3",
+      "round": "Matchday 2",
       "date": "2026-06-25",
-      "time": "15:00 UTC",
+      "time": "17:00 ART",
       "team1": "Curazao",
       "team2": "Costa de Marfil",
       "group": "Group E",
-      "ground": "Azteca, CDMX"
+      "ground": "Lincoln Financial Field, Philadelphia"
     },
     {
-      "round": "Matchday 1",
-      "date": "2026-06-26",
-      "time": "19:00 UTC",
+      "round": "Matchday 2",
+      "date": "2026-06-25",
+      "time": "17:00 ART",
+      "team1": "Ecuador",
+      "team2": "Alemania",
+      "group": "Group E",
+      "ground": "MetLife Stadium, East Rutherford"
+    },
+    {
+      "round": "Matchday 2",
+      "date": "2026-06-14",
+      "time": "17:00 ART",
       "team1": "Países Bajos",
       "team2": "Japón",
       "group": "Group F",
-      "ground": "MetLife, NY"
+      "ground": "AT&T Stadium, Arlington"
     },
     {
-      "round": "Matchday 1",
-      "date": "2026-06-11",
-      "time": "23:00 UTC",
+      "round": "Matchday 2",
+      "date": "2026-06-14",
+      "time": "23:00 ART",
       "team1": "Suecia",
       "team2": "Túnez",
       "group": "Group F",
-      "ground": "SoFi, LA"
+      "ground": "Estadio BBVA, Guadalupe"
     },
     {
       "round": "Matchday 2",
-      "date": "2026-06-12",
-      "time": "15:00 UTC",
+      "date": "2026-06-20",
+      "time": "14:00 ART",
       "team1": "Países Bajos",
       "team2": "Suecia",
       "group": "Group F",
-      "ground": "BC Place, Vancouver"
+      "ground": "NRG Stadium, Houston"
     },
     {
       "round": "Matchday 2",
-      "date": "2026-06-13",
-      "time": "19:00 UTC",
-      "team1": "Japón",
-      "team2": "Túnez",
-      "group": "Group F",
-      "ground": "Mercedes-Benz, Atlanta"
-    },
-    {
-      "round": "Matchday 3",
-      "date": "2026-06-14",
-      "time": "23:00 UTC",
+      "date": "2026-06-21",
+      "time": "01:00 ART",
       "team1": "Túnez",
-      "team2": "Países Bajos",
+      "team2": "Japón",
       "group": "Group F",
-      "ground": "Hard Rock, Miami"
+      "ground": "Estadio BBVA, Guadalupe"
     },
     {
-      "round": "Matchday 3",
-      "date": "2026-06-15",
-      "time": "15:00 UTC",
+      "round": "Matchday 2",
+      "date": "2026-06-25",
+      "time": "20:00 ART",
       "team1": "Japón",
       "team2": "Suecia",
       "group": "Group F",
-      "ground": "Gillette, Boston"
+      "ground": "AT&T Stadium, Arlington"
     },
     {
-      "round": "Matchday 1",
-      "date": "2026-06-16",
-      "time": "19:00 UTC",
+      "round": "Matchday 2",
+      "date": "2026-06-25",
+      "time": "20:00 ART",
+      "team1": "Túnez",
+      "team2": "Países Bajos",
+      "group": "Group F",
+      "ground": "Arrowhead Stadium, Kansas City"
+    },
+    {
+      "round": "Matchday 2",
+      "date": "2026-06-15",
+      "time": "16:00 ART",
       "team1": "Bélgica",
       "team2": "Egipto",
       "group": "Group G",
-      "ground": "AT&T, Dallas"
+      "ground": "Lumen Field, Seattle"
     },
     {
-      "round": "Matchday 1",
-      "date": "2026-06-17",
-      "time": "23:00 UTC",
+      "round": "Matchday 2",
+      "date": "2026-06-15",
+      "time": "22:00 ART",
       "team1": "Irán",
       "team2": "Nueva Zelanda",
       "group": "Group G",
-      "ground": "Arrowhead, KC"
+      "ground": "SoFi Stadium, Inglewood"
     },
     {
       "round": "Matchday 2",
-      "date": "2026-06-18",
-      "time": "15:00 UTC",
+      "date": "2026-06-21",
+      "time": "16:00 ART",
       "team1": "Bélgica",
       "team2": "Irán",
       "group": "Group G",
-      "ground": "NRG, Houston"
+      "ground": "SoFi Stadium, Inglewood"
     },
     {
       "round": "Matchday 2",
-      "date": "2026-06-19",
-      "time": "19:00 UTC",
-      "team1": "Egipto",
-      "team2": "Nueva Zelanda",
-      "group": "Group G",
-      "ground": "Lincoln Financial, Philly"
-    },
-    {
-      "round": "Matchday 3",
-      "date": "2026-06-20",
-      "time": "23:00 UTC",
-      "team1": "Nueva Zelanda",
-      "team2": "Bélgica",
-      "group": "Group G",
-      "ground": "Levi's, SF"
-    },
-    {
-      "round": "Matchday 3",
       "date": "2026-06-21",
-      "time": "15:00 UTC",
+      "time": "22:00 ART",
+      "team1": "Nueva Zelanda",
+      "team2": "Egipto",
+      "group": "Group G",
+      "ground": "BC Place, Vancouver"
+    },
+    {
+      "round": "Matchday 2",
+      "date": "2026-06-27",
+      "time": "00:00 ART",
       "team1": "Egipto",
       "team2": "Irán",
       "group": "Group G",
       "ground": "Lumen Field, Seattle"
     },
     {
-      "round": "Matchday 1",
-      "date": "2026-06-22",
-      "time": "19:00 UTC",
-      "team1": "España",
-      "team2": "Cabo Verde",
-      "group": "Group H",
-      "ground": "Akron, Guadalajara"
-    },
-    {
-      "round": "Matchday 1",
-      "date": "2026-06-23",
-      "time": "23:00 UTC",
-      "team1": "Arabia Saudita",
-      "team2": "Uruguay",
-      "group": "Group H",
-      "ground": "BBVA, Monterrey"
-    },
-    {
       "round": "Matchday 2",
-      "date": "2026-06-24",
-      "time": "15:00 UTC",
-      "team1": "España",
-      "team2": "Arabia Saudita",
-      "group": "Group H",
-      "ground": "Azteca, CDMX"
-    },
-    {
-      "round": "Matchday 2",
-      "date": "2026-06-25",
-      "time": "19:00 UTC",
-      "team1": "Cabo Verde",
-      "team2": "Uruguay",
-      "group": "Group H",
-      "ground": "MetLife, NY"
-    },
-    {
-      "round": "Matchday 3",
-      "date": "2026-06-26",
-      "time": "23:00 UTC",
-      "team1": "Uruguay",
-      "team2": "España",
-      "group": "Group H",
-      "ground": "SoFi, LA"
-    },
-    {
-      "round": "Matchday 3",
-      "date": "2026-06-11",
-      "time": "15:00 UTC",
-      "team1": "Cabo Verde",
-      "team2": "Arabia Saudita",
-      "group": "Group H",
+      "date": "2026-06-27",
+      "time": "00:00 ART",
+      "team1": "Nueva Zelanda",
+      "team2": "Bélgica",
+      "group": "Group G",
       "ground": "BC Place, Vancouver"
-    },
-    {
-      "round": "Matchday 1",
-      "date": "2026-06-12",
-      "time": "19:00 UTC",
-      "team1": "Francia",
-      "team2": "Senegal",
-      "group": "Group I",
-      "ground": "Mercedes-Benz, Atlanta"
-    },
-    {
-      "round": "Matchday 1",
-      "date": "2026-06-13",
-      "time": "23:00 UTC",
-      "team1": "Irak",
-      "team2": "Noruega",
-      "group": "Group I",
-      "ground": "Hard Rock, Miami"
-    },
-    {
-      "round": "Matchday 2",
-      "date": "2026-06-14",
-      "time": "15:00 UTC",
-      "team1": "Francia",
-      "team2": "Irak",
-      "group": "Group I",
-      "ground": "Gillette, Boston"
     },
     {
       "round": "Matchday 2",
       "date": "2026-06-15",
-      "time": "19:00 UTC",
-      "team1": "Senegal",
-      "team2": "Noruega",
-      "group": "Group I",
-      "ground": "AT&T, Dallas"
-    },
-    {
-      "round": "Matchday 3",
-      "date": "2026-06-16",
-      "time": "23:00 UTC",
-      "team1": "Noruega",
-      "team2": "Francia",
-      "group": "Group I",
-      "ground": "Arrowhead, KC"
-    },
-    {
-      "round": "Matchday 3",
-      "date": "2026-06-17",
-      "time": "15:00 UTC",
-      "team1": "Senegal",
-      "team2": "Irak",
-      "group": "Group I",
-      "ground": "NRG, Houston"
-    },
-    {
-      "round": "Matchday 1",
-      "date": "2026-06-18",
-      "time": "19:00 UTC",
-      "team1": "Argentina",
-      "team2": "Argelia",
-      "group": "Group J",
-      "ground": "Lincoln Financial, Philly"
-    },
-    {
-      "round": "Matchday 1",
-      "date": "2026-06-19",
-      "time": "23:00 UTC",
-      "team1": "Austria",
-      "team2": "Jordania",
-      "group": "Group J",
-      "ground": "Levi's, SF"
+      "time": "13:00 ART",
+      "team1": "España",
+      "team2": "Cabo Verde",
+      "group": "Group H",
+      "ground": "Mercedes-Benz Stadium, Atlanta"
     },
     {
       "round": "Matchday 2",
-      "date": "2026-06-20",
-      "time": "15:00 UTC",
-      "team1": "Argentina",
-      "team2": "Austria",
-      "group": "Group J",
-      "ground": "Lumen Field, Seattle"
+      "date": "2026-06-15",
+      "time": "19:00 ART",
+      "team1": "Arabia Saudita",
+      "team2": "Uruguay",
+      "group": "Group H",
+      "ground": "Hard Rock Stadium, Miami Gardens"
     },
     {
       "round": "Matchday 2",
       "date": "2026-06-21",
-      "time": "19:00 UTC",
-      "team1": "Argelia",
-      "team2": "Jordania",
-      "group": "Group J",
-      "ground": "Akron, Guadalajara"
+      "time": "13:00 ART",
+      "team1": "España",
+      "team2": "Arabia Saudita",
+      "group": "Group H",
+      "ground": "Mercedes-Benz Stadium, Atlanta"
     },
     {
-      "round": "Matchday 3",
-      "date": "2026-06-22",
-      "time": "23:00 UTC",
-      "team1": "Jordania",
-      "team2": "Argentina",
-      "group": "Group J",
-      "ground": "BBVA, Monterrey"
-    },
-    {
-      "round": "Matchday 3",
-      "date": "2026-06-23",
-      "time": "15:00 UTC",
-      "team1": "Argelia",
-      "team2": "Austria",
-      "group": "Group J",
-      "ground": "Azteca, CDMX"
-    },
-    {
-      "round": "Matchday 1",
-      "date": "2026-06-24",
-      "time": "19:00 UTC",
-      "team1": "Portugal",
-      "team2": "RD Congo",
-      "group": "Group K",
-      "ground": "MetLife, NY"
-    },
-    {
-      "round": "Matchday 1",
-      "date": "2026-06-25",
-      "time": "23:00 UTC",
-      "team1": "Uzbekistán",
-      "team2": "Colombia",
-      "group": "Group K",
-      "ground": "SoFi, LA"
+      "round": "Matchday 2",
+      "date": "2026-06-21",
+      "time": "19:00 ART",
+      "team1": "Uruguay",
+      "team2": "Cabo Verde",
+      "group": "Group H",
+      "ground": "Hard Rock Stadium, Miami Gardens"
     },
     {
       "round": "Matchday 2",
       "date": "2026-06-26",
-      "time": "15:00 UTC",
+      "time": "21:00 ART",
+      "team1": "Cabo Verde",
+      "team2": "Arabia Saudita",
+      "group": "Group H",
+      "ground": "NRG Stadium, Houston"
+    },
+    {
+      "round": "Matchday 2",
+      "date": "2026-06-26",
+      "time": "21:00 ART",
+      "team1": "Uruguay",
+      "team2": "España",
+      "group": "Group H",
+      "ground": "Estadio Akron, Zapopan"
+    },
+    {
+      "round": "Matchday 3",
+      "date": "2026-06-16",
+      "time": "16:00 ART",
+      "team1": "Francia",
+      "team2": "Senegal",
+      "group": "Group I",
+      "ground": "MetLife Stadium, East Rutherford"
+    },
+    {
+      "round": "Matchday 3",
+      "date": "2026-06-16",
+      "time": "19:00 ART",
+      "team1": "Irak",
+      "team2": "Noruega",
+      "group": "Group I",
+      "ground": "Gillette Stadium, Foxborough"
+    },
+    {
+      "round": "Matchday 3",
+      "date": "2026-06-22",
+      "time": "18:00 ART",
+      "team1": "Francia",
+      "team2": "Irak",
+      "group": "Group I",
+      "ground": "Lincoln Financial Field, Philadelphia"
+    },
+    {
+      "round": "Matchday 3",
+      "date": "2026-06-22",
+      "time": "21:00 ART",
+      "team1": "Noruega",
+      "team2": "Senegal",
+      "group": "Group I",
+      "ground": "MetLife Stadium, East Rutherford"
+    },
+    {
+      "round": "Matchday 3",
+      "date": "2026-06-26",
+      "time": "16:00 ART",
+      "team1": "Noruega",
+      "team2": "Francia",
+      "group": "Group I",
+      "ground": "Gillette Stadium, Foxborough"
+    },
+    {
+      "round": "Matchday 3",
+      "date": "2026-06-26",
+      "time": "16:00 ART",
+      "team1": "Senegal",
+      "team2": "Irak",
+      "group": "Group I",
+      "ground": "BMO Field, Toronto"
+    },
+    {
+      "round": "Matchday 3",
+      "date": "2026-06-16",
+      "time": "22:00 ART",
+      "team1": "Argentina",
+      "team2": "Argelia",
+      "group": "Group J",
+      "ground": "Arrowhead Stadium, Kansas City"
+    },
+    {
+      "round": "Matchday 3",
+      "date": "2026-06-17",
+      "time": "01:00 ART",
+      "team1": "Austria",
+      "team2": "Jordania",
+      "group": "Group J",
+      "ground": "Levi's Stadium, Santa Clara"
+    },
+    {
+      "round": "Matchday 3",
+      "date": "2026-06-22",
+      "time": "14:00 ART",
+      "team1": "Argentina",
+      "team2": "Austria",
+      "group": "Group J",
+      "ground": "AT&T Stadium, Arlington"
+    },
+    {
+      "round": "Matchday 3",
+      "date": "2026-06-23",
+      "time": "00:00 ART",
+      "team1": "Jordania",
+      "team2": "Argelia",
+      "group": "Group J",
+      "ground": "Levi's Stadium, Santa Clara"
+    },
+    {
+      "round": "Matchday 3",
+      "date": "2026-06-27",
+      "time": "23:00 ART",
+      "team1": "Argelia",
+      "team2": "Austria",
+      "group": "Group J",
+      "ground": "Arrowhead Stadium, Kansas City"
+    },
+    {
+      "round": "Matchday 3",
+      "date": "2026-06-27",
+      "time": "23:00 ART",
+      "team1": "Jordania",
+      "team2": "Argentina",
+      "group": "Group J",
+      "ground": "AT&T Stadium, Arlington"
+    },
+    {
+      "round": "Matchday 3",
+      "date": "2026-06-17",
+      "time": "14:00 ART",
+      "team1": "Portugal",
+      "team2": "RD Congo",
+      "group": "Group K",
+      "ground": "NRG Stadium, Houston"
+    },
+    {
+      "round": "Matchday 3",
+      "date": "2026-06-17",
+      "time": "23:00 ART",
+      "team1": "Uzbekistán",
+      "team2": "Colombia",
+      "group": "Group K",
+      "ground": "Estadio Azteca, Mexico City"
+    },
+    {
+      "round": "Matchday 3",
+      "date": "2026-06-23",
+      "time": "14:00 ART",
       "team1": "Portugal",
       "team2": "Uzbekistán",
       "group": "Group K",
-      "ground": "BC Place, Vancouver"
-    },
-    {
-      "round": "Matchday 2",
-      "date": "2026-06-11",
-      "time": "19:00 UTC",
-      "team1": "RD Congo",
-      "team2": "Colombia",
-      "group": "Group K",
-      "ground": "Mercedes-Benz, Atlanta"
+      "ground": "NRG Stadium, Houston"
     },
     {
       "round": "Matchday 3",
-      "date": "2026-06-12",
-      "time": "23:00 UTC",
+      "date": "2026-06-23",
+      "time": "23:00 ART",
+      "team1": "Colombia",
+      "team2": "RD Congo",
+      "group": "Group K",
+      "ground": "Estadio Akron, Zapopan"
+    },
+    {
+      "round": "Matchday 3",
+      "date": "2026-06-27",
+      "time": "20:30 ART",
       "team1": "Colombia",
       "team2": "Portugal",
       "group": "Group K",
-      "ground": "Hard Rock, Miami"
+      "ground": "Hard Rock Stadium, Miami Gardens"
     },
     {
       "round": "Matchday 3",
-      "date": "2026-06-13",
-      "time": "15:00 UTC",
+      "date": "2026-06-27",
+      "time": "20:30 ART",
       "team1": "RD Congo",
       "team2": "Uzbekistán",
       "group": "Group K",
-      "ground": "Gillette, Boston"
+      "ground": "Mercedes-Benz Stadium, Atlanta"
     },
     {
-      "round": "Matchday 1",
-      "date": "2026-06-14",
-      "time": "19:00 UTC",
+      "round": "Matchday 3",
+      "date": "2026-06-17",
+      "time": "17:00 ART",
       "team1": "Inglaterra",
       "team2": "Croacia",
       "group": "Group L",
-      "ground": "AT&T, Dallas"
+      "ground": "AT&T Stadium, Arlington"
     },
     {
-      "round": "Matchday 1",
-      "date": "2026-06-15",
-      "time": "23:00 UTC",
+      "round": "Matchday 3",
+      "date": "2026-06-17",
+      "time": "20:00 ART",
       "team1": "Ghana",
       "team2": "Panamá",
       "group": "Group L",
-      "ground": "Arrowhead, KC"
+      "ground": "BMO Field, Toronto"
     },
     {
-      "round": "Matchday 2",
-      "date": "2026-06-16",
-      "time": "15:00 UTC",
+      "round": "Matchday 3",
+      "date": "2026-06-23",
+      "time": "17:00 ART",
       "team1": "Inglaterra",
       "team2": "Ghana",
       "group": "Group L",
-      "ground": "NRG, Houston"
-    },
-    {
-      "round": "Matchday 2",
-      "date": "2026-06-17",
-      "time": "19:00 UTC",
-      "team1": "Croacia",
-      "team2": "Panamá",
-      "group": "Group L",
-      "ground": "Lincoln Financial, Philly"
+      "ground": "Gillette Stadium, Foxborough"
     },
     {
       "round": "Matchday 3",
-      "date": "2026-06-18",
-      "time": "23:00 UTC",
+      "date": "2026-06-23",
+      "time": "20:00 ART",
+      "team1": "Panamá",
+      "team2": "Croacia",
+      "group": "Group L",
+      "ground": "BMO Field, Toronto"
+    },
+    {
+      "round": "Matchday 3",
+      "date": "2026-06-27",
+      "time": "18:00 ART",
       "team1": "Panamá",
       "team2": "Inglaterra",
       "group": "Group L",
-      "ground": "Levi's, SF"
+      "ground": "MetLife Stadium, East Rutherford"
     },
     {
       "round": "Matchday 3",
-      "date": "2026-06-19",
-      "time": "15:00 UTC",
+      "date": "2026-06-27",
+      "time": "18:00 ART",
       "team1": "Croacia",
       "team2": "Ghana",
       "group": "Group L",
-      "ground": "Lumen Field, Seattle"
-    },
-    {
-      "round": "Round of 32",
-      "date": "2026-06-28",
-      "time": "16:00 UTC",
-      "team1": "1° Grupo A",
-      "team2": "2° Grupo B",
-      "ground": "MetLife, NY"
-    },
-    {
-      "round": "Round of 32",
-      "date": "2026-06-28",
-      "time": "16:00 UTC",
-      "team1": "1° Grupo C",
-      "team2": "3° Gpe A/B/F",
-      "ground": "SoFi, LA"
-    },
-    {
-      "round": "Round of 32",
-      "date": "2026-06-29",
-      "time": "16:00 UTC",
-      "team1": "1° Grupo B",
-      "team2": "2° Grupo A",
-      "ground": "Hard Rock, Miami"
-    },
-    {
-      "round": "Round of 32",
-      "date": "2026-06-29",
-      "time": "16:00 UTC",
-      "team1": "1° Grupo D",
-      "team2": "3° Gpe B/C/H",
-      "ground": "AT&T, Dallas"
-    },
-    {
-      "round": "Round of 32",
-      "date": "2026-06-30",
-      "time": "16:00 UTC",
-      "team1": "1° Grupo E",
-      "team2": "2° Grupo F",
-      "ground": "Gillette, Boston"
-    },
-    {
-      "round": "Round of 32",
-      "date": "2026-06-30",
-      "time": "16:00 UTC",
-      "team1": "1° Grupo G",
-      "team2": "2° Grupo H",
-      "ground": "Arrowhead, KC"
-    },
-    {
-      "round": "Round of 32",
-      "date": "2026-06-30",
-      "time": "16:00 UTC",
-      "team1": "1° Grupo F",
-      "team2": "2° Grupo E",
-      "ground": "NRG, Houston"
-    },
-    {
-      "round": "Round of 32",
-      "date": "2026-07-01",
-      "time": "16:00 UTC",
-      "team1": "1° Grupo H",
-      "team2": "2° Grupo G",
-      "ground": "Akron, Guadalajara"
-    },
-    {
-      "round": "Round of 32",
-      "date": "2026-07-01",
-      "time": "16:00 UTC",
-      "team1": "1° Grupo I",
-      "team2": "2° Grupo J",
-      "ground": "SoFi, LA"
-    },
-    {
-      "round": "Round of 32",
-      "date": "2026-07-02",
-      "time": "16:00 UTC",
-      "team1": "1° Grupo K",
-      "team2": "3° Gpe I/J/L",
-      "ground": "MetLife, NY"
-    },
-    {
-      "round": "Round of 32",
-      "date": "2026-07-02",
-      "time": "16:00 UTC",
-      "team1": "1° Grupo J",
-      "team2": "2° Grupo I",
-      "ground": "BC Place, Vancouver"
-    },
-    {
-      "round": "Round of 32",
-      "date": "2026-07-02",
-      "time": "16:00 UTC",
-      "team1": "1° Grupo L",
-      "team2": "3° Gpe G/H/K",
-      "ground": "Lincoln Financial, Philly"
-    },
-    {
-      "round": "Round of 32",
-      "date": "2026-07-03",
-      "time": "16:00 UTC",
-      "team1": "2° Grupo C",
-      "team2": "2° Grupo D",
-      "ground": "Arrowhead, KC"
-    },
-    {
-      "round": "Round of 32",
-      "date": "2026-07-03",
-      "time": "16:00 UTC",
-      "team1": "2° Grupo K",
-      "team2": "2° Grupo L",
-      "ground": "Gillette, Boston"
-    },
-    {
-      "round": "Round of 32",
-      "date": "2026-07-04",
-      "time": "16:00 UTC",
-      "team1": "1° Grupo A",
-      "team2": "3° Gpe C/D/E",
-      "ground": "Azteca, CDMX"
-    },
-    {
-      "round": "Round of 32",
-      "date": "2026-07-04",
-      "time": "16:00 UTC",
-      "team1": "2° Grupo G",
-      "team2": "2° Grupo H",
-      "ground": "BBVA, Monterrey"
-    },
-    {
-      "round": "Round of 16",
-      "date": "2026-07-06",
-      "time": "16:00 UTC",
-      "team1": "Ganador M73",
-      "team2": "Ganador M74",
-      "ground": "MetLife, NY"
-    },
-    {
-      "round": "Round of 16",
-      "date": "2026-07-06",
-      "time": "16:00 UTC",
-      "team1": "Ganador M75",
-      "team2": "Ganador M76",
-      "ground": "Hard Rock, Miami"
-    },
-    {
-      "round": "Round of 16",
-      "date": "2026-07-07",
-      "time": "16:00 UTC",
-      "team1": "Ganador M77",
-      "team2": "Ganador M78",
-      "ground": "Gillette, Boston"
-    },
-    {
-      "round": "Round of 16",
-      "date": "2026-07-07",
-      "time": "16:00 UTC",
-      "team1": "Ganador M79",
-      "team2": "Ganador M80",
-      "ground": "SoFi, LA"
-    },
-    {
-      "round": "Round of 16",
-      "date": "2026-07-08",
-      "time": "16:00 UTC",
-      "team1": "Ganador M81",
-      "team2": "Ganador M82",
-      "ground": "Lincoln Financial, Philly"
-    },
-    {
-      "round": "Round of 16",
-      "date": "2026-07-08",
-      "time": "16:00 UTC",
-      "team1": "Ganador M83",
-      "team2": "Ganador M84",
-      "ground": "BC Place, Vancouver"
-    },
-    {
-      "round": "Round of 16",
-      "date": "2026-07-09",
-      "time": "16:00 UTC",
-      "team1": "Ganador M85",
-      "team2": "Ganador M86",
-      "ground": "Azteca, CDMX"
-    },
-    {
-      "round": "Round of 16",
-      "date": "2026-07-09",
-      "time": "16:00 UTC",
-      "team1": "Ganador M87",
-      "team2": "Ganador M88",
-      "ground": "Arrowhead, KC"
-    },
-    {
-      "round": "Quarter-finals",
-      "date": "2026-07-11",
-      "time": "16:00 UTC",
-      "team1": "Ganador M89",
-      "team2": "Ganador M90",
-      "ground": "SoFi, LA"
-    },
-    {
-      "round": "Quarter-finals",
-      "date": "2026-07-11",
-      "time": "16:00 UTC",
-      "team1": "Ganador M91",
-      "team2": "Ganador M92",
-      "ground": "AT&T, Dallas"
-    },
-    {
-      "round": "Quarter-finals",
-      "date": "2026-07-12",
-      "time": "16:00 UTC",
-      "team1": "Ganador M93",
-      "team2": "Ganador M94",
-      "ground": "Gillette, Boston"
-    },
-    {
-      "round": "Quarter-finals",
-      "date": "2026-07-12",
-      "time": "16:00 UTC",
-      "team1": "Ganador M95",
-      "team2": "Ganador M96",
-      "ground": "MetLife, NY"
-    },
-    {
-      "round": "Semi-finals",
-      "date": "2026-07-16",
-      "time": "16:00 UTC",
-      "team1": "Ganador M97",
-      "team2": "Ganador M98",
-      "ground": "Mercedes-Benz, Atlanta"
-    },
-    {
-      "round": "Semi-finals",
-      "date": "2026-07-17",
-      "time": "16:00 UTC",
-      "team1": "Ganador M99",
-      "team2": "Ganador M100",
-      "ground": "Hard Rock, Miami"
-    },
-    {
-      "round": "Match for third place",
-      "date": "2026-07-20",
-      "time": "16:00 UTC",
-      "team1": "Perdedor M101",
-      "team2": "Perdedor M102",
-      "ground": "Hard Rock, Miami"
-    },
-    {
-      "round": "Final",
-      "date": "2026-07-21",
-      "time": "16:00 UTC",
-      "team1": "Ganador M101",
-      "team2": "Ganador M102",
-      "ground": "MetLife Stadium, NY"
+      "ground": "Lincoln Financial Field, Philadelphia"
     }
   ]
 }

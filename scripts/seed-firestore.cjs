@@ -209,7 +209,7 @@ const INITIAL_CONFIG = {
   knockoutDeadline: "2026-06-27T23:59:00Z",
   buyInAmount: 6000,
   currency: "ARS",
-  paymentAlias: "yelcho.prode.mp",
+  paymentAlias: "felix.prode",
   prizeDistribution: { first: 0.60, second: 0.25, third: 0.15 },
   poolPercent: 0.50,
   inviteCodes: ["YELCHO2026-A8F3K2", "YELCHO2026-XYZ", "YELCHO2026-PRODE", "YELCHO2026-MUNDIAL"]
@@ -221,13 +221,13 @@ async function runSeeder() {
     console.log("🔑 Autenticando credenciales de Administrador Maestro...");
     const auth = getAuth(app);
     try {
-      await signInWithEmailAndPassword(auth, "felixblancovolpe@gmail.com", "FelixWhiteAdmin2026!");
+      await signInWithEmailAndPassword(auth, "felixblancovolpe@gmail.com", "Matata2026");
       console.log("   • [OK] Conectado como felixblancovolpe@gmail.com (Acceso Admin)");
     } catch (authErr) {
       if (authErr.code === 'auth/user-not-found' || authErr.code === 'auth/invalid-credential' || authErr.message.includes('credential')) {
         try {
           console.log("   • [INFO] Cuenta de admin no encontrada en Auth. Creando registro...");
-          await createUserWithEmailAndPassword(auth, "felixblancovolpe@gmail.com", "FelixWhiteAdmin2026!");
+          await createUserWithEmailAndPassword(auth, "felixblancovolpe@gmail.com", "Matata2026");
           console.log("   • [OK] Cuenta de administrador creada e iniciada con éxito!");
         } catch (createErr) {
           console.warn("   • [ALERTA] No se pudo crear la cuenta de administrador. Continuando sin auth por si las reglas de Firestore son abiertas:", createErr.message);

@@ -8,3 +8,14 @@ coverage/
 !.env.example
 .antigravity/
 scratch/
+
+# Sensitive — exports de Firebase Auth (NUNCA subir)
+auth_users.json
+
+# Scratch / archivos temporales de testing
+check.cjs
+check.js
+time_test.mjs
+time_test2.mjs
+test_seed.ts
+matches_wiki.json
