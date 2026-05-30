@@ -218,22 +218,36 @@ const INITIAL_CONFIG = {
 // 6. Execution runner upload
 async function runSeeder() {
   try {
+    // Admin credentials are read from environment variables — never hardcoded.
+    // Set ADMIN_EMAIL and ADMIN_PASSWORD in your local .env file.
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const adminPassword = process.env.ADMIN_PASSWORD;
+    if (!adminEmail || !adminPassword) {
+      console.error("❌ Missing ADMIN_EMAIL or ADMIN_PASSWORD environment variables.");
+      console.error("   Set them in your .env file (which is gitignored). Example:");
+      console.error("     ADMIN_EMAIL=felixblancovolpe@gmail.com");
+      console.error("     ADMIN_PASSWORD=your-real-firebase-auth-password");
+      process.exit(1);
+    }
+
     console.log("🔑 Autenticando credenciales de Administrador Maestro...");
     const auth = getAuth(app);
     try {
-      await signInWithEmailAndPassword(auth, "felixblancovolpe@gmail.com", "Matata2026");
-      console.log("   • [OK] Conectado como felixblancovolpe@gmail.com (Acceso Admin)");
+      await signInWithEmailAndPassword(auth, adminEmail, adminPassword);
+      console.log(`   • [OK] Conectado como ${adminEmail} (Acceso Admin)`);
     } catch (authErr) {
       if (authErr.code === 'auth/user-not-found' || authErr.code === 'auth/invalid-credential' || authErr.message.includes('credential')) {
         try {
           console.log("   • [INFO] Cuenta de admin no encontrada en Auth. Creando registro...");
-          await createUserWithEmailAndPassword(auth, "felixblancovolpe@gmail.com", "Matata2026");
+          await createUserWithEmailAndPassword(auth, adminEmail, adminPassword);
           console.log("   • [OK] Cuenta de administrador creada e iniciada con éxito!");
         } catch (createErr) {
-          console.warn("   • [ALERTA] No se pudo crear la cuenta de administrador. Continuando sin auth por si las reglas de Firestore son abiertas:", createErr.message);
+          console.error("   • [ERROR] No se pudo crear la cuenta de administrador:", createErr.message);
+          process.exit(1);
         }
       } else {
-        console.warn("   • [ALERTA] Falló el login de administrador. Continuando sin auth por si las reglas son abiertas:", authErr.message);
+        console.error("   • [ERROR] Falló el login de administrador:", authErr.message);
+        process.exit(1);
       }
     }
 
