@@ -15,10 +15,20 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 async function run() {
+  const adminEmail = process.env.ADMIN_EMAIL;
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  if (!adminEmail || !adminPassword) {
+    console.error("❌ Missing ADMIN_EMAIL or ADMIN_PASSWORD env vars. Set them in your .env file.");
+    process.exit(1);
+  }
+
+  console.log("🔑 Autenticando credenciales de Administrador...");
   try {
-    await signInWithEmailAndPassword(auth, "felixblancovolpe@gmail.com", "Matata2026");
+    await signInWithEmailAndPassword(auth, adminEmail, adminPassword);
+    console.log(`   • [OK] Conectado como ${adminEmail}`);
   } catch (err) {
-    console.log("No se pudo loguear:", err.message);
+    console.error("   • [ERROR] Falló el login de admin:", err.message);
+    process.exit(1);
   }
 
   // Knockout structure from seedData
