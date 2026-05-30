@@ -1,112 +1,202 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // Global support helpers
-    function isSignedIn() { return request.auth != null; }
-    function isAdmin() { return isSignedIn() && (request.auth.token.email == 'sebahotelmkt@gmail.com' || request.auth.token.email == 'felixblancovolpe@gmail.com' || exists(/databases/$(database)/documents/admins/$(request.auth.uid))); }
-    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+
+    // ─────────────────────────────────────────────────────────────
+    // Helper functions
+    // ─────────────────────────────────────────────────────────────
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'sebahotelmkt@gmail.com' ||
+        request.auth.token.email == 'felixblancovolpe@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
     function incoming() { return request.resource.data; }
     function existing() { return resource.data; }
 
-    // Deadline check (in UTC times)
-    // Cierre 1 (Groups & Specials): 10 June 2026 23:59 UTC = Epoch 1781135940 seconds (1781135940000 ms)
-    // Cierre 2 (Knockouts): 27 June 2026 23:59 UTC = Epoch 1782604740 seconds (1782604740000 ms)
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Group-stage closing: 10 June 2026 23:59 UTC = 1781135940000 ms
     function isBeforeGroupDeadline() {
       return request.time.toMillis() < 1781135940000;
     }
-    function isBeforeKnockoutDeadline() {
-      return request.time.toMillis() < 1782604740000;
-    }
 
+    // Match doc inspection
+    function matchExists(matchId) {
+      return exists(/databases/$(database)/documents/matches/$(matchId));
+    }
     function isMatchUnfinished(matchId) {
       let m = get(/databases/$(database)/documents/matches/$(matchId)).data;
       return m.isFinished == false || m.isFinished == null;
     }
 
+    // The predicting user must have paid (paymentStatus == 'confirmed')
+    function isUserPaymentConfirmed() {
+      let u = get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+      return u.paymentStatus == 'confirmed';
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Default deny everything (must be FIRST so specific matches override)
+    // ─────────────────────────────────────────────────────────────
     match /{document=**} {
       allow read, write: if false;
     }
 
+    // ─────────────────────────────────────────────────────────────
+    // /admins/{adminId}
+    //   Optional secondary admin grant via uid doc existence
+    // ─────────────────────────────────────────────────────────────
     match /admins/{adminId} {
       allow read: if isSignedIn();
       allow write: if isAdmin();
     }
 
+    // ─────────────────────────────────────────────────────────────
+    // /config/{settings}
+    //   Public read (alias MP, buy-in, deadlines)
+    // ─────────────────────────────────────────────────────────────
     match /config/{settings} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
+    // ─────────────────────────────────────────────────────────────
+    // /test/{document}
+    //   Connection probe used by client on boot
+    // ─────────────────────────────────────────────────────────────
     match /test/{document} {
       allow read, write: if true;
     }
 
+    // ─────────────────────────────────────────────────────────────
+    // /players/{playerId}
+    //   Roster for goleador/MVP (admin-managed)
+    // ─────────────────────────────────────────────────────────────
     match /players/{playerId} {
       allow read: if isSignedIn();
       allow write: if isAdmin();
     }
 
+    // ─────────────────────────────────────────────────────────────
+    // /matches/{matchId}
+    //   Read by signed-in users, written only by admin (results)
+    // ─────────────────────────────────────────────────────────────
     match /matches/{matchId} {
       allow read: if isSignedIn();
       allow write: if isAdmin();
     }
 
+    // ─────────────────────────────────────────────────────────────
+    // /users/{userId}
+    //   Self-managed profile. User CANNOT edit paymentStatus, isAdmin,
+    //   totalPoints, rank. Admins can edit everything.
+    // ─────────────────────────────────────────────────────────────
     match /users/{userId} {
-      allow read: if isSignedIn(); 
-      allow create: if isSignedIn() && userId == request.auth.uid && isValidUserOnCreate(incoming());
+      allow read: if isSignedIn();
+
+      allow create: if isSignedIn()
+                    && userId == request.auth.uid
+                    && isValidUserOnCreate(incoming());
+
       allow update: if isSignedIn() && (
-        isAdmin() || 
-        (userId == request.auth.uid && 
-         incoming().diff(existing()).affectedKeys().hasOnly(['nickname', 'whatsapp', 'photoURL', 'completionPercent']) &&
-         isValidUserOnUpdate(incoming()))
+        isAdmin()
+        || (
+          userId == request.auth.uid
+          && incoming().diff(existing()).affectedKeys().hasOnly([
+               'nickname', 'whatsapp', 'photoURL', 'completionPercent',
+               'paymentNotified', 'paymentNotifiedAt'
+             ])
+          && isValidUserOnUpdate(incoming())
+        )
       );
+
       allow delete: if isAdmin();
     }
 
+    // ─────────────────────────────────────────────────────────────
+    // /predictions/{predictionId}
+    //   - Read own anytime; after deadline read all (Audición Transparente)
+    //   - Write only own predictions, before deadline, on unfinished matches
+    //   - Predictor must have paymentStatus == 'confirmed'
+    //   - predictionId MUST equal `${userId}_${matchId}` to prevent dup-spam
+    // ─────────────────────────────────────────────────────────────
     match /predictions/{predictionId} {
-      // Before groupStageDeadline: user can only fetch/read their own prediction.
-      // After groupStageDeadline: anyone can read if they are authenticated.
-      allow read: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid || !isBeforeGroupDeadline());
-      
-      allow create: if isSignedIn() && 
-                    incoming().userId == request.auth.uid && 
-                    isValidPrediction(incoming()) && 
-                    isMatchActiveForPrediction(predictionId) &&
-                    isMatchUnfinished(incoming().matchId);
-                    
-      allow update: if isSignedIn() && 
-                    existing().userId == request.auth.uid && 
-                    isValidPrediction(incoming()) && 
-                    isMatchActiveForPrediction(predictionId) && 
-                    isMatchUnfinished(existing().matchId) &&
-                    incoming().diff(existing()).affectedKeys().hasOnly(['homeScore', 'awayScore', 'updatedAt']);
-                    
+
+      allow read: if isSignedIn() && (
+        resource == null
+        || resource.data.userId == request.auth.uid
+        || !isBeforeGroupDeadline()
+      );
+
+      allow create: if isSignedIn()
+                    && incoming().userId == request.auth.uid
+                    && isValidPrediction(incoming())
+                    && isBeforeGroupDeadline()
+                    && predictionId == request.auth.uid + '_' + incoming().matchId
+                    && matchExists(incoming().matchId)
+                    && isMatchUnfinished(incoming().matchId)
+                    && isUserPaymentConfirmed();
+
+      allow update: if isSignedIn()
+                    && existing().userId == request.auth.uid
+                    && isValidPrediction(incoming())
+                    && isBeforeGroupDeadline()
+                    && isMatchUnfinished(existing().matchId)
+                    && incoming().diff(existing()).affectedKeys().hasOnly([
+                         'homeScore', 'awayScore', 'updatedAt', 'pointsEarned'
+                       ])
+                    && isUserPaymentConfirmed();
+
       allow delete: if isAdmin();
     }
 
-    // Helper validation functions
+    // ─────────────────────────────────────────────────────────────
+    // Validation helpers
+    // ─────────────────────────────────────────────────────────────
+
     function isValidUserOnCreate(data) {
-      return data.keys().hasAll(['fullName', 'email', 'paymentStatus', 'createdAt', 'uid']) &&
-             data.fullName is string && data.fullName.size() >= 3 && data.fullName.size() <= 100 &&
-             data.email is string && data.email.size() >= 3 && data.email.size() <= 100 &&
-             data.uid == request.auth.uid;
+      return data.keys().hasAll(['fullName', 'email', 'paymentStatus', 'createdAt', 'uid'])
+             && data.fullName is string
+             && data.fullName.size() >= 3 && data.fullName.size() <= 100
+             && data.email is string
+             && data.email.size() >= 3 && data.email.size() <= 100
+             && data.uid == request.auth.uid
+             // Security-critical: paymentStatus MUST be 'pending' on create
+             && data.paymentStatus == 'pending'
+             // Security-critical: isAdmin MUST be false or absent on create
+             && (!data.keys().hasAny(['isAdmin']) || data.isAdmin == false)
+             // Points MUST be 0 or absent on create
+             && (!data.keys().hasAny(['totalPoints']) || data.totalPoints == 0);
     }
 
     function isValidUserOnUpdate(data) {
-      return (data.nickname == null || (data.nickname is string && data.nickname.size() <= 30)) &&
-             (data.whatsapp == null || (data.whatsapp is string && data.whatsapp.size() <= 30)) &&
-             (data.photoURL == null || (data.photoURL is string && data.photoURL.size() <= 1000));
+      return (data.nickname == null
+              || (data.nickname is string && data.nickname.size() <= 30))
+             && (data.whatsapp == null
+                 || (data.whatsapp is string && data.whatsapp.size() <= 30))
+             // photoURL may be a base64 data URL (compressed JPEG ~256x256). 200 KB cap.
+             && (data.photoURL == null
+                 || (data.photoURL is string && data.photoURL.size() <= 200000));
     }
 
     function isValidPrediction(data) {
-      return data.keys().hasAll(['userId', 'matchId', 'homeScore', 'awayScore']) &&
-             data.homeScore is int && data.homeScore >= 0 && data.homeScore <= 20 &&
-             data.awayScore is int && data.awayScore >= 0 && data.awayScore <= 20;
-    }
-
-    function isMatchActiveForPrediction(predictionId) {
-      return isBeforeGroupDeadline();
+      return data.keys().hasAll(['userId', 'matchId', 'homeScore', 'awayScore'])
+             && data.homeScore is int
+             && data.homeScore >= 0 && data.homeScore <= 20
+             && data.awayScore is int
+             && data.awayScore >= 0 && data.awayScore <= 20
+             && data.matchId is string
+             && isValidId(data.matchId);
     }
   }
 }
