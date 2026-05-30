@@ -236,108 +236,44 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(true);
     try {
       const cleanEmail = email.trim().toLowerCase();
-      const actualPassword = password?.trim() || "Felix2611";
+      const actualPassword = password?.trim();
+
+      if (!actualPassword) {
+        throw new Error("Por favor ingresá tu contraseña.");
+      }
 
       if (IS_SANDBOX) {
         const users = getActiveUsers();
         const match = users.find(u => u.email.toLowerCase() === cleanEmail);
-        
+
         if (!match) {
           throw new Error("No encontramos ningún usuario con ese email. Verificá los datos o registrate.");
         }
 
-        // Check password if provided. Felix2611 is a master password that bypasses everything in sandbox
-        if (password && password !== "Felix2611") {
-          if (match.password && match.password !== password) {
-            throw new Error("Contraseña incorrecta. Verificá la clave o usá la clave maestra.");
-          }
+        if (match.password && match.password !== actualPassword) {
+          throw new Error("Contraseña incorrecta. Verificá tus datos o usá '¿Olvidaste tu contraseña?'.");
         }
-        
+
         setUser(match);
         saveActiveSession(match);
         return match;
       } else {
-        const isSebaBypass = cleanEmail === "sebahotelmkt@gmail.com" && actualPassword === "SebaProdeMundial2026!";
-        const isFelixBypass = cleanEmail === "felixblancovolpe@gmail.com" && actualPassword === "FelixWhiteAdmin2026!";
-
-        // Direct Master Administrator bypass to guarantee login under iframe or network restrictions
-        if (isSebaBypass || isFelixBypass) {
-          console.log("Master Administrator password bypass triggered in live mode.");
-          
-          let realUid = "admin_tester";
-          if (auth) {
-            try {
-              const credentials = await signInWithEmailAndPassword(auth, cleanEmail, actualPassword);
-              realUid = credentials.user.uid;
-              console.log("   • [Auth Admin OK] Autenticado en Firebase Auth, UID real:", realUid);
-            } catch (authErr: any) {
-              console.warn("   • [Auth Admin Retry] Falló login inicial. Creando cuenta...", authErr.message);
-              try {
-                const credentials = await createUserWithEmailAndPassword(auth, cleanEmail, actualPassword);
-                realUid = credentials.user.uid;
-                console.log("   • [Auth Admin OK] Cuenta de administrador creada, UID real:", realUid);
-              } catch (createErr: any) {
-                console.error("   • [Auth Admin Error] Falló auto-creación:", createErr.message);
-              }
-            }
-          }
-
-          const adminProfile: UserProfile = {
-            uid: realUid,
-            fullName: "Felix Blanco",
-            nickname: "Felixwhite",
-            email: cleanEmail,
-            whatsapp: "+541198765432",
-            photoURL: null,
-            paymentStatus: "confirmed",
-            createdAt: new Date().toISOString(),
-            isAdmin: true,
-            totalPoints: 0,
-            completionPercent: 0,
-            rank: 1
-          };
-          
-          if (db) {
-            try {
-              await setDoc(doc(db, "users", realUid), adminProfile);
-            } catch (fsErr) {
-              console.warn("Failed to save bypassed admin profile to live Firestore, continuing with local session:", fsErr);
-            }
-          }
-          
-          setUser(adminProfile);
-          saveActiveSession(adminProfile);
-          return adminProfile;
-        }
-
-        // Live mode authentication
+        // Live mode authentication. Admins log in with the same flow as
+        // regular users — privileges are granted server-side via the
+        // request.auth.token.email check in firestore.rules. There is NO
+        // password bypass: any hardcoded credential in client code is
+        // public to anyone reading the bundle and can never be trusted.
         let authUser;
         try {
           const credentials = await signInWithEmailAndPassword(auth, cleanEmail, actualPassword);
           authUser = credentials.user;
         } catch (authErr: any) {
-          if ((cleanEmail === "sebahotelmkt@gmail.com" || cleanEmail === "felixblancovolpe@gmail.com") && 
-              (authErr.code === 'auth/user-not-found' || authErr.code === 'auth/invalid-credential')) {
-            try {
-              console.log("Admin account not found in Auth or invalid. Attempting auto-registration...");
-              const credentials = await createUserWithEmailAndPassword(auth, cleanEmail, actualPassword);
-              authUser = credentials.user;
-            } catch (createErr: any) {
-              if (createErr.code === 'auth/email-already-in-use') {
-                // If it was already in use, then the "invalid-credential" was actually a wrong password!
-                throw new Error("Contraseña incorrecta. Verificá la clave o usá la clave maestra.");
-              } else {
-                throw new Error("No pudimos crear tu cuenta de administrador: " + (createErr.message || String(createErr)));
-              }
-            }
+          if (authErr.code === 'auth/wrong-password' || authErr.code === 'auth/invalid-credential') {
+            throw new Error("Contraseña incorrecta. Verificá tus datos o usá '¿Olvidaste tu contraseña?'.");
+          } else if (authErr.code === 'auth/user-not-found') {
+            throw new Error("No encontramos ningún usuario con ese email. Verificá los datos o registrate.");
           } else {
-            if (authErr.code === 'auth/wrong-password' || authErr.code === 'auth/invalid-credential') {
-              throw new Error("Contraseña incorrecta. Verificá la clave o usá la clave maestra.");
-            } else if (authErr.code === 'auth/user-not-found') {
-              throw new Error("No encontramos ningún usuario con ese email. Verificá los datos o registrate.");
-            } else {
-              throw new Error(authErr.message || String(authErr));
-            }
+            throw new Error(authErr.message || String(authErr));
           }
         }
 
@@ -449,7 +385,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // From prompt spec: admin is defined by uid "admin" or email 'sebahotelmkt@gmail.com' or 'felixblancovolpe@gmail.com'
 
       let uid = "user_" + Math.random().toString(36).substr(2, 9);
-      const actualPassword = params.password?.trim() || "Felix2611";
+      const actualPassword = params.password?.trim();
+      if (!actualPassword) {
+        throw new Error("Por favor ingresá una contraseña.");
+      }
 
       if (!IS_SANDBOX) {
         // Live signup
@@ -484,8 +423,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAdmin: isAdminEmail,
         totalPoints: 0,
         completionPercent: 0,
-        rank: users.length + 1,
-        password: actualPassword
+        rank: users.length + 1
+        // Note: password is intentionally NOT stored in the user profile.
+        // Firebase Auth handles credentials; storing the password in
+        // Firestore would expose it to anyone with read access.
       };
 
       if (IS_SANDBOX) {
