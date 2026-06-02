@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { getFirestore, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, collection, query, where, onSnapshot, getDocFromServer } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, collection, query, where, onSnapshot, getDocFromServer, enableMultiTabIndexedDbPersistence, writeBatch } from 'firebase/firestore';
 import firebaseConfig from '../../firebase-applet-config.json';
 import { ALL_MATCHES, TOP_PLAYERS, INITIAL_CONFIG, Match, Player } from '../data/seedData';
 
@@ -34,6 +34,15 @@ if (!IS_SANDBOX) {
     const dbId = resolvedConfig.firestoreDatabaseId === 'default' ? undefined : resolvedConfig.firestoreDatabaseId;
     firestoreDb = dbId ? getFirestore(firebaseApp, dbId) : getFirestore(firebaseApp);
     firebaseAuth = getAuth(firebaseApp);
+    
+    // Enable multi-tab offline persistence
+    enableMultiTabIndexedDbPersistence(firestoreDb).catch((err) => {
+      if (err.code === 'failed-precondition') {
+        console.warn("Multiple tabs open, persistence can only be enabled in one tab at a time.");
+      } else if (err.code === 'unimplemented') {
+        console.warn("The current browser does not support all of the features required to enable persistence.");
+      }
+    });
   } catch (error) {
     console.warn("Could not load Live Firebase, moving to Sandbox Fallback mode:", error);
   }
@@ -171,18 +180,40 @@ export function getActiveMatches(): Match[] {
   return stored;
 }
 
-export function saveActiveMatches(matches: Match[]) {
+export async function saveActiveMatches(matches: Match[]): Promise<void> {
+  const original = getActiveMatches();
   localStorage.setItem(STORAGE_KEYS.MATCHES, JSON.stringify(matches));
   // Cascade recalculate points for all predictions when matches update
   recalculateAllScores(matches);
   if (!IS_SANDBOX && db) {
+    const batch = writeBatch(db);
+    let count = 0;
+    
+    const originalMap = new Map(original.map(m => [m.id, m]));
     matches.forEach(m => {
       if (m.id) {
-        setDoc(doc(db, "matches", m.id), m).catch(err => {
-          console.error(`Error saving match ${m.id} to Firestore:`, err);
-        });
+        const orig = originalMap.get(m.id);
+        const hasChanged = !orig || 
+          orig.homeScore !== m.homeScore || 
+          orig.awayScore !== m.awayScore || 
+          orig.isFinished !== m.isFinished;
+          
+        if (hasChanged) {
+          batch.set(doc(db, "matches", m.id), m);
+          count++;
+        }
       }
     });
+
+    if (count > 0) {
+      try {
+        await batch.commit();
+        console.log(`Successfully committed batch of ${count} matches to Firestore.`);
+      } catch (err) {
+        console.error("Error committing batch of matches to Firestore:", err);
+        throw err;
+      }
+    }
   }
 }
 
@@ -302,21 +333,41 @@ export function getActiveUsers(): any[] {
     return users;
 }
 
-export function saveActiveUsers(users: any[]) {
+export async function saveActiveUsers(users: any[]): Promise<void> {
+  const original = getOrInitStorage<any[]>(STORAGE_KEYS.USERS, []);
   localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
   if (!IS_SANDBOX && db) {
     const currentUid = auth?.currentUser?.uid;
     const currentEmail = auth?.currentUser?.email;
     const isCurrentUserAdmin = currentEmail === 'sebahotelmkt@gmail.com' || currentEmail === 'felixblancovolpe@gmail.com';
+    
+    const batch = writeBatch(db);
+    let count = 0;
+    
+    const originalMap = new Map(original.map(u => [u.uid, u]));
     users.forEach(u => {
       if (u.uid && !u.uid.startsWith('user_') && u.uid !== 'admin_tester') {
         if (isCurrentUserAdmin || u.uid === currentUid) {
-          setDoc(doc(db, "users", u.uid), u).catch(err => {
-            console.error(`Error saving user ${u.uid} to Firestore:`, err);
-          });
+          const orig = originalMap.get(u.uid);
+          const hasChanged = !orig || JSON.stringify(orig) !== JSON.stringify(u);
+          
+          if (hasChanged) {
+            batch.set(doc(db, "users", u.uid), u);
+            count++;
+          }
         }
       }
     });
+
+    if (count > 0) {
+      try {
+        await batch.commit();
+        console.log(`Successfully committed batch of ${count} users to Firestore.`);
+      } catch (err) {
+        console.error("Error committing batch of users to Firestore:", err);
+        throw err;
+      }
+    }
   }
 }
 
@@ -422,7 +473,8 @@ export function getActivePredictions(): any[] {
   return preds;
 }
 
-export function saveActivePredictions(preds: any[]) {
+export async function saveActivePredictions(preds: any[]): Promise<void> {
+  const original = getActivePredictions();
   localStorage.setItem(STORAGE_KEYS.PREDICTIONS, JSON.stringify(preds));
   // Resync profile completed percents
   const matches = getActiveMatches();
@@ -431,13 +483,35 @@ export function saveActivePredictions(preds: any[]) {
     const currentUid = auth.currentUser.uid;
     const currentEmail = auth?.currentUser?.email;
     const isCurrentUserAdmin = currentEmail === 'sebahotelmkt@gmail.com' || currentEmail === 'felixblancovolpe@gmail.com';
+    
+    const batch = writeBatch(db);
+    let count = 0;
+    
+    const originalMap = new Map(original.map(p => [p.id, p]));
     preds.forEach(p => {
       if (p.id && (p.userId === currentUid || isCurrentUserAdmin)) {
-        setDoc(doc(db, "predictions", p.id), p).catch(err => {
-          console.error(`Error saving prediction ${p.id} to Firestore:`, err);
-        });
+        const orig = originalMap.get(p.id);
+        const hasChanged = !orig || 
+          orig.homeScore !== p.homeScore || 
+          orig.awayScore !== p.awayScore ||
+          orig.pointsEarned !== p.pointsEarned;
+          
+        if (hasChanged) {
+          batch.set(doc(db, "predictions", p.id), p);
+          count++;
+        }
       }
     });
+
+    if (count > 0) {
+      try {
+        await batch.commit();
+        console.log(`Successfully committed batch of ${count} predictions to Firestore.`);
+      } catch (err) {
+        console.error("Error committing batch of predictions to Firestore:", err);
+        throw err;
+      }
+    }
   }
 }
 

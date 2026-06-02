@@ -66,10 +66,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onNavigate }) => {
       return u;
     });
     setUsers(updatedUsers);
-    saveActiveUsers(updatedUsers);
-    
-    // Trigger points recalculation block in firebase.ts by saving empty update
-    saveActiveMatches([...matches]);
+    try {
+      await saveActiveUsers(updatedUsers);
+      // Trigger points recalculation block in firebase.ts by saving empty update
+      await saveActiveMatches([...matches]);
+    } catch (e) {
+      alert("Error al actualizar el pago en la base de datos.");
+    }
   };
 
   const handleDeleteUser = async (uid: string) => {
@@ -78,12 +81,16 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onNavigate }) => {
 
     const remainingUsers = users.filter(u => u.uid !== uid);
     setUsers(remainingUsers);
-    saveActiveUsers(remainingUsers);
-    await deleteUserDoc(uid);
+    try {
+      await saveActiveUsers(remainingUsers);
+      await deleteUserDoc(uid);
+    } catch (e) {
+      alert("Error al eliminar el usuario.");
+    }
   };
 
   // 3. Save Finished Match Score & Recalculate standings points in the network
-  const handleSaveMatchScore = (matchId: string) => {
+  const handleSaveMatchScore = async (matchId: string) => {
     const scoreState = tempScores[matchId];
     if (!scoreState) {
       alert("Ingrese marcadores primero.");
@@ -111,13 +118,17 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onNavigate }) => {
     });
 
     setMatches(updatedMatches);
-    saveActiveMatches(updatedMatches); // This triggers scores-recalculations in all matches predictions!
-    setUsers(getActiveUsers()); // reload points state
-    alert("Marcador oficial guardado. Puntos de los usuarios recalculados correctamente.");
+    try {
+      await saveActiveMatches(updatedMatches); // This triggers scores-recalculations in all matches predictions!
+      setUsers(getActiveUsers()); // reload points state
+      alert("Marcador oficial guardado. Puntos de los usuarios recalculados correctamente.");
+    } catch (e) {
+      alert("Error al guardar marcador oficial en la base de datos.");
+    }
   };
 
   // 4. Cancel/Clear Match Score
-  const handleClearMatchScore = (matchId: string) => {
+  const handleClearMatchScore = async (matchId: string) => {
     const updatedMatches = matches.map(m => {
       if (m.id === matchId) {
         return {
@@ -131,9 +142,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onNavigate }) => {
     });
 
     setMatches(updatedMatches);
-    saveActiveMatches(updatedMatches);
-    setUsers(getActiveUsers());
-    alert("Marcador cancelado.");
+    try {
+      await saveActiveMatches(updatedMatches);
+      setUsers(getActiveUsers());
+      alert("Marcador cancelado.");
+    } catch (e) {
+      alert("Error al cancelar marcador en la base de datos.");
+    }
   };
 
   const handleTempScoreChange = (matchId: string, team: "home" | "away", val: string) => {

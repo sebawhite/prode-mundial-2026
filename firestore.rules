@@ -139,24 +139,34 @@ service cloud.firestore {
         || !isBeforeGroupDeadline()
       );
 
-      allow create: if isSignedIn()
-                    && incoming().userId == request.auth.uid
-                    && isValidPrediction(incoming())
-                    && isBeforeGroupDeadline()
-                    && predictionId == request.auth.uid + '_' + incoming().matchId
-                    && matchExists(incoming().matchId)
-                    && isMatchUnfinished(incoming().matchId)
-                    && isUserPaymentConfirmed();
+      allow create: if isSignedIn() && (
+                      isAdmin()
+                      || (
+                        incoming().userId == request.auth.uid
+                        && isValidPrediction(incoming())
+                        && isBeforeGroupDeadline()
+                        && predictionId == request.auth.uid + '_' + incoming().matchId
+                        && matchExists(incoming().matchId)
+                        && isMatchUnfinished(incoming().matchId)
+                        && isUserPaymentConfirmed()
+                      )
+                    );
 
-      allow update: if isSignedIn()
-                    && existing().userId == request.auth.uid
-                    && isValidPrediction(incoming())
-                    && isBeforeGroupDeadline()
-                    && isMatchUnfinished(existing().matchId)
-                    && incoming().diff(existing()).affectedKeys().hasOnly([
-                         'homeScore', 'awayScore', 'updatedAt', 'pointsEarned'
-                       ])
-                    && isUserPaymentConfirmed();
+      allow update: if isSignedIn() && (
+                      isAdmin()
+                      || (
+                        existing().userId == request.auth.uid
+                        && incoming().userId == request.auth.uid
+                        && incoming().matchId == existing().matchId
+                        && isValidPrediction(incoming())
+                        && isBeforeGroupDeadline()
+                        && isMatchUnfinished(existing().matchId)
+                        && incoming().diff(existing()).affectedKeys().hasOnly([
+                             'homeScore', 'awayScore', 'updatedAt', 'pointsEarned', 'createdAt', 'id', 'userId', 'matchId'
+                           ])
+                        && isUserPaymentConfirmed()
+                      )
+                    );
 
       allow delete: if isAdmin();
     }
@@ -200,10 +210,8 @@ service cloud.firestore {
 
     function isValidPrediction(data) {
       return data.keys().hasAll(['userId', 'matchId', 'homeScore', 'awayScore'])
-             && data.homeScore is int
-             && data.homeScore >= 0 && data.homeScore <= 20
-             && data.awayScore is int
-             && data.awayScore >= 0 && data.awayScore <= 20
+             && (data.homeScore == "" || (data.homeScore is int && data.homeScore >= 0 && data.homeScore <= 20))
+             && (data.awayScore == "" || (data.awayScore is int && data.awayScore >= 0 && data.awayScore <= 20))
              && data.matchId is string
              && isValidId(data.matchId);
     }

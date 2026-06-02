@@ -33,6 +33,12 @@ export const Fixture: React.FC<FixtureProps> = ({ onNavigate }) => {
   const [viewingUserId, setViewingUserId] = useState<string>(user?.uid || "");
   const [groupDeadlinePassed, setGroupDeadlinePassed] = useState(false);
   const [saveStatus, setSaveStatus] = useState<Record<string, "saved" | "saving" | null>>({});
+  
+  // Manual save states
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [isSavingManual, setIsSavingManual] = useState(false);
+  const [showSaveSuccess, setShowSaveSuccess] = useState(false);
+  const [showSaveError, setShowSaveError] = useState(false);
 
   // Debouncing refs
   const timeoutsRef = useRef<Record<string, NodeJS.Timeout>>({});
@@ -68,7 +74,8 @@ export const Fixture: React.FC<FixtureProps> = ({ onNavigate }) => {
 
   // Handles input score updates & debounces the local storage save by 1 second as specified
   const handleScoreChange = (matchId: string, team: "home" | "away", val: string) => {
-    const numericValue = val === "" ? null : Math.max(0, Math.min(20, parseInt(val, 10) || 0));
+    // Clear prediction to empty string if input is cleared, otherwise parse and clamp
+    const storedValue = val === "" ? "" : Math.max(0, Math.min(20, parseInt(val, 10) || 0));
     
     // 1. Instantly update the visual component state for rapid responsive input
     const updatedPredictions = [...predictions];
@@ -80,42 +87,37 @@ export const Fixture: React.FC<FixtureProps> = ({ onNavigate }) => {
         id: predictionId,
         userId: user.uid,
         matchId,
-        homeScore: team === "home" ? (numericValue ?? 0) : 0,
-        awayScore: team === "away" ? (numericValue ?? 0) : 0,
+        homeScore: team === "home" ? storedValue : "",
+        awayScore: team === "away" ? storedValue : "",
         createdAt: new Date().toISOString()
       }) - 1;
     } else {
       updatedPredictions[matchIdx] = {
         ...updatedPredictions[matchIdx],
-        [team === "home" ? "homeScore" : "awayScore"]: numericValue ?? 0,
+        [team === "home" ? "homeScore" : "awayScore"]: storedValue,
         updatedAt: new Date().toISOString()
       };
     }
     setPredictions(updatedPredictions);
+    setHasUnsavedChanges(true);
+    setShowSaveError(false); // Clear error status on new interaction
+  };
 
-    // 2. Clear pre-existing save debounce timers for this match
-    if (timeoutsRef.current[matchId]) {
-      clearTimeout(timeoutsRef.current[matchId]);
+  const handleManualSave = async () => {
+    setIsSavingManual(true);
+    setShowSaveError(false);
+    try {
+      await saveActivePredictions(predictions);
+      await new Promise(resolve => setTimeout(resolve, 800)); // Smooth UX delay
+      setHasUnsavedChanges(false);
+      setShowSaveSuccess(true);
+      setTimeout(() => setShowSaveSuccess(false), 3000);
+    } catch (e) {
+      console.error("Error manual saving:", e);
+      setShowSaveError(true);
+    } finally {
+      setIsSavingManual(false);
     }
-
-    setSaveStatus(prev => ({ ...prev, [matchId]: "saving" }));
-
-    // 3. Queue the persistence write in exactly 1000ms
-    timeoutsRef.current[matchId] = setTimeout(() => {
-      saveActivePredictions(updatedPredictions);
-      setSaveStatus(prev => ({ ...prev, [matchId]: "saved" }));
-      
-      // Clear status after 3 seconds
-      setTimeout(() => {
-        setSaveStatus(prev => {
-          const dict = { ...prev };
-          if (dict[matchId] === "saved") {
-            dict[matchId] = null;
-          }
-          return dict;
-        });
-      }, 3000);
-    }, 1000);
   };
 
   // Filtering operations
@@ -447,6 +449,52 @@ export const Fixture: React.FC<FixtureProps> = ({ onNavigate }) => {
         )}
       </div>
 
+      {/* Floating Manual Save Button */}
+      {(hasUnsavedChanges || isSavingManual || showSaveSuccess || showSaveError) && (
+        <div className="fixed bottom-6 left-0 right-0 z-50 flex justify-center px-4 animate-in slide-in-from-bottom-8 fade-in duration-300">
+          <button
+            onClick={handleManualSave}
+            disabled={isSavingManual || showSaveSuccess}
+            className={`
+              shadow-2xl font-bold py-3 px-8 rounded-full transition-all duration-300
+              border-2 flex items-center gap-2
+              ${showSaveSuccess 
+                ? 'bg-green-500 border-green-600 text-white'
+                : showSaveError
+                  ? 'bg-red-500 border-red-600 text-white animate-bounce'
+                  : isSavingManual
+                    ? 'bg-brand-primary/80 border-brand-primary text-white cursor-wait'
+                    : 'bg-brand-primary border-brand-ink text-brand-surface hover:bg-brand-secondary hover:scale-105 active:scale-95'
+              }
+            `}
+          >
+            {showSaveSuccess ? (
+              <>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                ¡Guardado!
+              </>
+            ) : showSaveError ? (
+              <>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                Error al guardar. Reintentar
+              </>
+            ) : isSavingManual ? (
+              <>
+                <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Guardando...
+              </>
+            ) : (
+              <>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
+                Guardar mis pronósticos
+              </>
+            )}
+          </button>
+        </div>
+      )}
     </div>
   );
 };
