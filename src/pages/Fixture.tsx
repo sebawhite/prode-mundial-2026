@@ -456,31 +456,30 @@ export const Fixture: React.FC<FixtureProps> = ({ onNavigate }) => {
             onClick={handleManualSave}
             disabled={isSavingManual || showSaveSuccess}
             className={`
-              shadow-2xl font-bold py-3 px-8 rounded-full transition-all duration-300
-              border-2 flex items-center gap-2
+              font-mono text-xs uppercase tracking-wider font-bold py-3.5 px-8 flex items-center gap-2 transition-all duration-150
               ${showSaveSuccess 
-                ? 'bg-green-500 border-green-600 text-white'
+                ? 'bg-brand-win text-white retro-border retro-shadow cursor-default'
                 : showSaveError
-                  ? 'bg-red-500 border-red-600 text-white animate-bounce'
+                  ? 'bg-brand-error text-white retro-border retro-shadow animate-bounce cursor-pointer'
                   : isSavingManual
-                    ? 'bg-brand-primary/80 border-brand-primary text-white cursor-wait'
-                    : 'bg-brand-primary border-brand-ink text-brand-surface hover:bg-brand-secondary hover:scale-105 active:scale-95'
+                    ? 'bg-brand-accent/80 text-white/80 border-3 border-brand-ink cursor-wait shadow-[2px_2px_0px_#2a1f17] translate-y-[4px]'
+                    : 'bg-brand-accent text-white retro-border retro-shadow hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_#2a1f17] active:translate-y-[2px] active:shadow-[2px_2px_0px_#2a1f17] cursor-pointer'
               }
             `}
           >
             {showSaveSuccess ? (
               <>
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                <svg className="w-4 h-4 stroke-[3px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                 ¡Guardado!
               </>
             ) : showSaveError ? (
               <>
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                <svg className="w-4 h-4 stroke-[3px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                 Error al guardar. Reintentar
               </>
             ) : isSavingManual ? (
               <>
-                <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
@@ -488,7 +487,7 @@ export const Fixture: React.FC<FixtureProps> = ({ onNavigate }) => {
               </>
             ) : (
               <>
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
+                <svg className="w-4 h-4 stroke-[3px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
                 Guardar mis pronósticos
               </>
             )}
