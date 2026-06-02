@@ -10,7 +10,7 @@ interface PendingPaymentProps {
 export const PendingPayment: React.FC<PendingPaymentProps> = ({ onNavigate }) => {
   const { user, logout, updateLocalUserProfile } = useAuth();
   const [copied, setCopied] = useState(false);
-  const [notified, setNotified] = useState(user.paymentNotified === true);
+  const [notified, setNotified] = useState(user?.paymentNotified === true);
 
   if (!user) return null;
 
@@ -75,7 +75,7 @@ export const PendingPayment: React.FC<PendingPaymentProps> = ({ onNavigate }) =>
           </div>
 
           <div className="text-[11px] text-brand-ink-muted leading-tight italic pt-2 border-t border-brand-ink/10">
-            📌 Beneficiario de la cuenta de MercadoPago: <strong>Felix Blanco</strong>. Por favor poné en el motivo "PRODE MUNDIAL".
+            📌 Beneficiario de la cuenta de Brubank: <strong>Felix Blanco</strong>. Por favor poné en el motivo "PRODE MUNDIAL".
           </div>
         </div>
 
@@ -86,7 +86,7 @@ export const PendingPayment: React.FC<PendingPaymentProps> = ({ onNavigate }) =>
           </h4>
           <ol className="list-decimal list-inside text-xs space-y-2 font-sans pl-1">
             <li>
-              Hacé clic en el botón de abajo para notificar a Felix Blanco en Buenos Aires.
+              Hacé clic en el botón de abajo para notificar a Felix Blanco.
             </li>
             <li>
               Mandale tu comprobante por <strong>WhatsApp</strong> para agilizar la habilitación.

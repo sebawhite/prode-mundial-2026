@@ -87,7 +87,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
 
   const handleHeroScoreChange = (team: "home" | "away", val: string) => {
     if (!nextMatch) return;
-    const numericValue = val === "" ? 0 : Math.max(0, Math.min(20, parseInt(val, 10) || 0));
+    const storedValue = val === "" ? "" : Math.max(0, Math.min(20, parseInt(val, 10) || 0));
     
     const updatedPredictions = [...predictions];
     const predictionId = `${user.uid}_${nextMatch.id}`;
@@ -98,14 +98,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         id: predictionId,
         userId: user.uid,
         matchId: nextMatch.id,
-        homeScore: team === "home" ? numericValue : 0,
-        awayScore: team === "away" ? numericValue : 0,
+        homeScore: team === "home" ? storedValue : "",
+        awayScore: team === "away" ? storedValue : "",
         createdAt: new Date().toISOString()
       });
     } else {
       updatedPredictions[matchIdx] = {
         ...updatedPredictions[matchIdx],
-        [team === "home" ? "homeScore" : "awayScore"]: numericValue,
+        [team === "home" ? "homeScore" : "awayScore"]: storedValue,
         updatedAt: new Date().toISOString()
       };
     }
@@ -113,10 +113,16 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
     setHeroSaveStatus("saving");
 
     // Debounce/simulated persist delay
-    setTimeout(() => {
-      saveActivePredictions(updatedPredictions);
-      setHeroSaveStatus("saved");
-      setTimeout(() => setHeroSaveStatus(null), 2500);
+    setTimeout(async () => {
+      try {
+        await saveActivePredictions(updatedPredictions);
+        setHeroSaveStatus("saved");
+      } catch (err) {
+        console.error("Error saving hero prediction:", err);
+        setHeroSaveStatus(null);
+      } finally {
+        setTimeout(() => setHeroSaveStatus(null), 2500);
+      }
     }, 800);
   };
 
