@@ -207,8 +207,12 @@ export async function saveActiveMatches(matches: Match[]): Promise<void> {
 
     if (count > 0) {
       try {
-        await batch.commit();
-        console.log(`Successfully committed batch of ${count} matches to Firestore.`);
+        const commitPromise = batch.commit();
+        await Promise.race([
+          commitPromise,
+          new Promise((resolve) => setTimeout(resolve, 1500))
+        ]);
+        console.log(`Committed batch of ${count} matches (resolved/timed out).`);
       } catch (err) {
         console.error("Error committing batch of matches to Firestore:", err);
         throw err;
@@ -361,8 +365,12 @@ export async function saveActiveUsers(users: any[]): Promise<void> {
 
     if (count > 0) {
       try {
-        await batch.commit();
-        console.log(`Successfully committed batch of ${count} users to Firestore.`);
+        const commitPromise = batch.commit();
+        await Promise.race([
+          commitPromise,
+          new Promise((resolve) => setTimeout(resolve, 1500))
+        ]);
+        console.log(`Committed batch of ${count} users (resolved/timed out).`);
       } catch (err) {
         console.error("Error committing batch of users to Firestore:", err);
         throw err;
@@ -505,8 +513,12 @@ export async function saveActivePredictions(preds: any[]): Promise<void> {
 
     if (count > 0) {
       try {
-        await batch.commit();
-        console.log(`Successfully committed batch of ${count} predictions to Firestore.`);
+        const commitPromise = batch.commit();
+        await Promise.race([
+          commitPromise,
+          new Promise((resolve) => setTimeout(resolve, 1500))
+        ]);
+        console.log(`Committed batch of ${count} predictions (resolved/timed out).`);
       } catch (err) {
         console.error("Error committing batch of predictions to Firestore:", err);
         throw err;
