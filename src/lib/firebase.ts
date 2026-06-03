@@ -483,10 +483,7 @@ export function getActivePredictions(): any[] {
 
 export async function saveActivePredictions(preds: any[]): Promise<void> {
   const original = getActivePredictions();
-  localStorage.setItem(STORAGE_KEYS.PREDICTIONS, JSON.stringify(preds));
-  // Resync profile completed percents
-  const matches = getActiveMatches();
-  recalculateAllScores(matches);
+  
   if (!IS_SANDBOX && db && auth?.currentUser) {
     const currentUid = auth.currentUser.uid;
     const currentEmail = auth?.currentUser?.email;
@@ -497,6 +494,10 @@ export async function saveActivePredictions(preds: any[]): Promise<void> {
     
     const originalMap = new Map(original.map(p => [p.id, p]));
     preds.forEach(p => {
+      if (p.homeScore === "" || p.awayScore === "") {
+        return; // Skip incomplete predictions
+      }
+      
       if (p.id && (p.userId === currentUid || isCurrentUserAdmin)) {
         const orig = originalMap.get(p.id);
         const hasChanged = !orig || 
@@ -521,10 +522,18 @@ export async function saveActivePredictions(preds: any[]): Promise<void> {
         console.log(`Committed batch of ${count} predictions (resolved/timed out).`);
       } catch (err) {
         console.error("Error committing batch of predictions to Firestore:", err);
-        throw err;
+        throw err; // Throw before writing to local storage
       }
     }
   }
+
+  // Only update localStorage and recalculate AFTER a successful commit (or if sandbox)
+  const validPreds = preds.filter(p => p.homeScore !== "" && p.awayScore !== "");
+  localStorage.setItem(STORAGE_KEYS.PREDICTIONS, JSON.stringify(validPreds));
+  
+  // Resync profile completed percents
+  const matches = getActiveMatches();
+  recalculateAllScores(matches);
 }
 
 // Fetch system config on app boot to ensure local storage always has the latest config/settings, even if not logged in

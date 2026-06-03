@@ -113,9 +113,10 @@ service cloud.firestore {
         || (
           userId == request.auth.uid
           && incoming().diff(existing()).affectedKeys().hasOnly([
-               'nickname', 'whatsapp', 'photoURL', 'completionPercent',
-               'paymentNotified', 'paymentNotifiedAt'
+               'fullName', 'email', 'nickname', 'whatsapp', 'photoURL', 'completionPercent',
+               'paymentNotified', 'paymentNotifiedAt', 'createdAt', 'rank', 'uid'
              ])
+          && (!incoming().diff(existing()).affectedKeys().hasAny(['email']) || incoming().email == request.auth.token.email)
           && isValidUserOnUpdate(incoming())
         )
       );
@@ -162,7 +163,7 @@ service cloud.firestore {
                         && isBeforeGroupDeadline()
                         && isMatchUnfinished(existing().matchId)
                         && incoming().diff(existing()).affectedKeys().hasOnly([
-                             'homeScore', 'awayScore', 'updatedAt', 'pointsEarned', 'createdAt', 'id', 'userId', 'matchId'
+                             'homeScore', 'awayScore', 'updatedAt', 'createdAt', 'id', 'userId', 'matchId'
                            ])
                         && isUserPaymentConfirmed()
                       )
@@ -201,6 +202,8 @@ service cloud.firestore {
     function isValidUserOnUpdate(data) {
       return (data.nickname == null
               || (data.nickname is string && data.nickname.size() <= 30))
+             && (data.fullName == null
+                 || (data.fullName is string && data.fullName.size() >= 3 && data.fullName.size() <= 100))
              && (data.whatsapp == null
                  || (data.whatsapp is string && data.whatsapp.size() <= 30))
              // photoURL may be a base64 data URL (compressed JPEG ~256x256). 200 KB cap.
@@ -210,8 +213,8 @@ service cloud.firestore {
 
     function isValidPrediction(data) {
       return data.keys().hasAll(['userId', 'matchId', 'homeScore', 'awayScore'])
-             && (data.homeScore == "" || (data.homeScore is int && data.homeScore >= 0 && data.homeScore <= 20))
-             && (data.awayScore == "" || (data.awayScore is int && data.awayScore >= 0 && data.awayScore <= 20))
+             && data.homeScore is int && data.homeScore >= 0 && data.homeScore <= 20
+             && data.awayScore is int && data.awayScore >= 0 && data.awayScore <= 20
              && data.matchId is string
              && isValidId(data.matchId);
     }
