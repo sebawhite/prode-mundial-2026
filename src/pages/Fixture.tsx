@@ -63,8 +63,13 @@ export const Fixture: React.FC<FixtureProps> = ({ onNavigate }) => {
   // Listen to live database synchronization updates
   useEffect(() => {
     const handleSync = () => {
-      setPredictions(getActivePredictions());
-      setUsers(getActiveUsers());
+      setHasUnsavedChanges(prev => {
+        if (!prev) {
+          setPredictions(getActivePredictions());
+          setUsers(getActiveUsers());
+        }
+        return prev;
+      });
     };
     window.addEventListener('prode_data_updated', handleSync);
     return () => window.removeEventListener('prode_data_updated', handleSync);
@@ -78,27 +83,29 @@ export const Fixture: React.FC<FixtureProps> = ({ onNavigate }) => {
     const storedValue = val === "" ? "" : Math.max(0, Math.min(20, parseInt(val, 10) || 0));
     
     // 1. Instantly update the visual component state for rapid responsive input
-    const updatedPredictions = [...predictions];
-    const predictionId = `${user.uid}_${matchId}`;
-    let matchIdx = updatedPredictions.findIndex(p => p.id === predictionId);
+    setPredictions(prevPredictions => {
+      const updatedPredictions = [...prevPredictions];
+      const predictionId = `${user.uid}_${matchId}`;
+      let matchIdx = updatedPredictions.findIndex(p => p.id === predictionId);
 
-    if (matchIdx === -1) {
-      matchIdx = updatedPredictions.push({
-        id: predictionId,
-        userId: user.uid,
-        matchId,
-        homeScore: team === "home" ? storedValue : "",
-        awayScore: team === "away" ? storedValue : "",
-        createdAt: new Date().toISOString()
-      }) - 1;
-    } else {
-      updatedPredictions[matchIdx] = {
-        ...updatedPredictions[matchIdx],
-        [team === "home" ? "homeScore" : "awayScore"]: storedValue,
-        updatedAt: new Date().toISOString()
-      };
-    }
-    setPredictions(updatedPredictions);
+      if (matchIdx === -1) {
+        updatedPredictions.push({
+          id: predictionId,
+          userId: user.uid,
+          matchId,
+          homeScore: team === "home" ? storedValue : "",
+          awayScore: team === "away" ? storedValue : "",
+          createdAt: new Date().toISOString()
+        });
+      } else {
+        updatedPredictions[matchIdx] = {
+          ...updatedPredictions[matchIdx],
+          [team === "home" ? "homeScore" : "awayScore"]: storedValue,
+          updatedAt: new Date().toISOString()
+        };
+      }
+      return updatedPredictions;
+    });
     setHasUnsavedChanges(true);
     setShowSaveError(false); // Clear error status on new interaction
   };

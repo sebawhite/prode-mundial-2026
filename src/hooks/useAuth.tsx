@@ -469,7 +469,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         let delay = 150;
         while (retries > 0) {
           try {
-            await setDoc(doc(db, "users", uid), newUser);
+            await setDoc(doc(db, "users", uid), newUser, { merge: true });
             break;
           } catch (err: any) {
             console.warn(`Attempt to save user document failed (${retries} retries left):`, err);
