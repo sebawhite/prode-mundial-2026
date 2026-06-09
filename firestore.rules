@@ -149,7 +149,6 @@ service cloud.firestore {
                         && predictionId == request.auth.uid + '_' + incoming().matchId
                         && matchExists(incoming().matchId)
                         && isMatchUnfinished(incoming().matchId)
-                        && isUserPaymentConfirmed()
                       )
                     );
 
@@ -165,7 +164,6 @@ service cloud.firestore {
                         && incoming().diff(existing()).affectedKeys().hasOnly([
                              'homeScore', 'awayScore', 'updatedAt', 'createdAt', 'id', 'userId', 'matchId'
                            ])
-                        && isUserPaymentConfirmed()
                       )
                     );
 

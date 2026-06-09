@@ -228,34 +228,46 @@ export function recalculateAllScores(matches: Match[]) {
   
   const matchesMap = new Map(matches.map(m => [m.id, m]));
   
+  const currentUid = auth?.currentUser?.uid;
+  const currentEmail = auth?.currentUser?.email;
+  const isCurrentUserAdmin = currentEmail === 'sebahotelmkt@gmail.com' || currentEmail === 'felixblancovolpe@gmail.com';
+
   users.forEach(user => {
     let pts = 0;
     let predictedCount = 0;
     
     // Core predictions points calculation
     const userPreds = predictions.filter(p => p.userId === user.uid);
-    userPreds.forEach(pred => {
-      const match = matchesMap.get(pred.matchId);
-      if (match) {
-        predictedCount++;
-        if (match.isFinished) {
-          const mPoints = calculateMatchPoints(
-            pred.homeScore,
-            pred.awayScore,
-            match.homeScore,
-            match.awayScore,
-            match.stage !== "groups"
-          );
-          pred.pointsEarned = mPoints;
-          pts += mPoints;
+    
+    // Avoid wiping out other users' stats if we haven't downloaded their predictions due to security rules
+    if (!IS_SANDBOX && !isCurrentUserAdmin && user.uid !== currentUid) {
+      pts = user.totalPoints || 0;
+      // We don't touch user.completionPercent so it retains the value synced from Firestore
+    } else {
+      userPreds.forEach(pred => {
+        const match = matchesMap.get(pred.matchId);
+        if (match) {
+          predictedCount++;
+          if (match.isFinished) {
+            const mPoints = calculateMatchPoints(
+              pred.homeScore,
+              pred.awayScore,
+              match.homeScore,
+              match.awayScore,
+              match.stage !== "groups"
+            );
+            pred.pointsEarned = mPoints;
+            pts += mPoints;
+          }
         }
-      }
-    });
+      });
 
-    // Calculate completion %
-    const totalMatchesCount = matches.length;
+      // Calculate completion %
+      const totalMatchesCount = matches.length;
+      user.completionPercent = Math.round((predictedCount / totalMatchesCount) * 100);
+    }
+    
     user.totalPoints = pts;
-    user.completionPercent = Math.round((predictedCount / totalMatchesCount) * 100);
   });
   
   // Sort and assign ranks
