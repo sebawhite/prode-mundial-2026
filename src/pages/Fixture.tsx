@@ -6,7 +6,8 @@ import {
   saveActivePredictions, 
   isBeforeDeadline,
   calculateMatchPoints,
-  getActiveConfig
+  getActiveConfig,
+  IS_SANDBOX
 } from '../lib/firebase';
 import { useWorldCupData } from '../hooks/useWorldCupData';
 import { Match } from '../data/seedData';
