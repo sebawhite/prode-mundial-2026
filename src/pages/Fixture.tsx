@@ -323,7 +323,8 @@ export const Fixture: React.FC<FixtureProps> = ({ onNavigate }) => {
             // Validate if the match is locked for predictions
             const editOpen = isBeforeDeadline(m.stage);
             const isViewingSelf = viewingUserId === user.uid;
-            const canEdit = editOpen && isViewingSelf && !m.isFinished;
+            // Allow editing even if payment is pending, per user request
+            const canEdit = editOpen && isViewingSelf && !m.isFinished && !IS_SANDBOX;
 
             const hasPred = pred.homeScore !== "" && pred.homeScore !== null && pred.awayScore !== "" && pred.awayScore !== null;
             const pointsEarned = isFinished && hasPred ? getPlayedPointsEarned(m, pred.homeScore, pred.awayScore) : 0;
