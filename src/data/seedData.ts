@@ -389,7 +389,7 @@ export const TOP_PLAYERS: Player[] = [
 ];
 
 export const INITIAL_CONFIG = {
-  groupStageDeadline: "2026-06-10T23:59:00Z",
+  groupStageDeadline: "2026-06-11T19:00:00Z",
   knockoutDeadline: "2026-06-27T23:59:00Z",
   buyInAmount: 6000,
   currency: "ARS",
