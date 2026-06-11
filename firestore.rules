@@ -25,9 +25,9 @@ service cloud.firestore {
       return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
     }
 
-    // Group-stage closing: 10 June 2026 23:59 UTC = 1781135940000 ms
+    // Group-stage closing: 11 June 2026 19:00 UTC = 1781204400000 ms
     function isBeforeGroupDeadline() {
-      return request.time.toMillis() < 1781135940000;
+      return request.time.toMillis() < 1781204400000;
     }
 
     // Match doc inspection
