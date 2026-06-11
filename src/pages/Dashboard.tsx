@@ -77,8 +77,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   const totalPredicted = userPredictions.length;
   const completionPercent = matches.length > 0 ? Math.round((totalPredicted / matches.length) * 100) : 0;
 
-  // Find next upcoming unplayed match (skipping finished matches)
-  const nextMatch = matches.find(m => !m.isFinished && m.homeScore === null && m.awayScore === null) || matches.find(m => !m.isFinished) || matches[0];
+  // Find next upcoming match (chronologically) that hasn't started yet
+  const nowMs = new Date().getTime();
+  const sortedMatches = [...matches].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const nextMatch = 
+    sortedMatches.find(m => !m.isFinished && new Date(m.date).getTime() > nowMs) || 
+    sortedMatches.find(m => !m.isFinished && m.homeScore === null && m.awayScore === null) || 
+    sortedMatches[0];
   const nextPred = nextMatch 
     ? predictions.find(p => p.userId === user.uid && p.matchId === nextMatch.id) 
     : null;
