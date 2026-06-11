@@ -169,9 +169,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
       {/* Main Bento Grid layout */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
         
-        {/* Next Match Prediction (Large Hero Card - col-span-8) */}
+        {/* Next Match Prediction (Large Hero Card - col-span-12) */}
         {nextMatch ? (
-          <section className="col-span-1 md:col-span-8 bg-brand-card border-2 border-brand-ink shadow-[6px_6px_0px_#2a1f17] p-5 relative flex flex-col justify-between min-h-[300px]">
+          <section className="col-span-1 md:col-span-12 bg-brand-card border-2 border-brand-ink shadow-[6px_6px_0px_#2a1f17] p-5 relative flex flex-col justify-between min-h-[300px]">
             <div className="absolute top-2 left-2 text-[10px] font-mono text-brand-ink-muted/40">⊕ DESAFÍO_PRÓXIMO</div>
             
             <div className="flex justify-between items-center mb-4">
@@ -260,31 +260,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           </section>
         ) : null}
 
-        {/* Completeness / Progress Stats Card (col-span-4) */}
-        <section className="col-span-1 md:col-span-4 bg-brand-bg border-2 border-brand-ink shadow-[6px_6px_0px_#2a1f17] p-5 flex flex-col justify-between min-h-[300px]">
-          <div>
-            <span className="font-mono text-[9px] uppercase tracking-wider text-brand-ink-muted/50 block">⊕ REGISTRO_ESTADÍSTICO</span>
-            <p className="text-xs font-black uppercase text-brand-ink-muted mt-2 tracking-tight leading-none">Mi Completitud</p>
-            
-            <div className="flex items-end gap-2 my-5">
-              <span className="text-5xl sm:text-6xl font-black font-mono leading-none tracking-tighter text-brand-ink">{completionPercent}%</span>
-              <span className="text-sm font-bold font-mono pb-1 text-brand-ink-muted">({totalPredicted}/{matches.length})</span>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <div className="w-full h-5 border-2 border-brand-ink bg-white rounded-none p-0.5 overflow-hidden">
-              <div 
-                className="h-full bg-brand-gold border border-brand-ink/10 transition-all duration-500" 
-                style={{ width: `${completionPercent}%` }}
-              ></div>
-            </div>
-            
-            <div className="bg-[#ede0c8] p-3 border border-brand-ink/20 font-mono text-[10px] text-brand-ink-muted select-none rounded-sm">
-              💡 ¡Rellenar fixture antes de que expire el plazo! Cada pronóstico guardado suma puntaje para el pozo.
-            </div>
-          </div>
-        </section>
 
         {/* Mini Ranking Top 5 (col-span-4) */}
         <section className="col-span-1 md:col-span-4 bg-brand-ink text-brand-bg border-2 border-brand-ink shadow-[6px_6px_0px_#2a1f17] p-5 flex flex-col justify-between">
