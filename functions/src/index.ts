@@ -1,7 +1,6 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-import { defineSecret } from "firebase-functions/params";
-import axios from "axios";
+
 
 admin.initializeApp();
 
@@ -46,83 +45,5 @@ export const onUserCreated = functions.auth.user().onCreate(async (user) => {
   } catch (error) {
     console.error(`Error creando el perfil inicial para ${uid}:`, error);
   }
-});
-
-const apiFootballKey = defineSecret("API_FOOTBALL_KEY");
-
-const TEAM_MAP: Record<string, string> = {
-  "mexico": "méxico",
-  "south africa": "sudáfrica",
-  "south korea": "corea del sur",
-  "czech republic": "rep. checa",
-  "canada": "canadá",
-  "bosnia": "bosnia y h.",
-  "bosnia-herzegovina": "bosnia y h.",
-  "bosnia and herzegovina": "bosnia y h.",
-  "switzerland": "suiza",
-  "qatar": "qatar",
-  "brazil": "brasil",
-  "morocco": "marruecos",
-  "haiti": "haití",
-  "scotland": "escocia",
-};
-
-export const syncMatchResults = functions.runWith({ secrets: [apiFootballKey] })
-  .pubsub.schedule("every 15 minutes").onRun(async () => {
-    const today = new Date().toISOString().split("T")[0];
-    const db = admin.firestore();
-
-    try {
-      const response = await axios.get("https://v3.football.api-sports.io/fixtures", {
-        headers: { "x-apisports-key": apiFootballKey.value() },
-        params: { date: today, league: 1, season: 2026 }
-      });
-
-      const fixtures = response.data.response;
-      if (!fixtures || fixtures.length === 0) return null;
-
-      const batch = db.batch();
-      let updates = 0;
-
-      const matchesSnap = await db.collection("matches").where("isFinished", "==", false).get();
-      if (matchesSnap.empty) return null;
-
-      for (const fixture of fixtures) {
-        if (["FT", "PEN", "AET"].includes(fixture.fixture.status.short)) {
-          const homeScore = fixture.goals.home;
-          const awayScore = fixture.goals.away;
-          
-          let homeName = fixture.teams.home.name.toLowerCase();
-          let awayName = fixture.teams.away.name.toLowerCase();
-          
-          homeName = TEAM_MAP[homeName] || homeName;
-          awayName = TEAM_MAP[awayName] || awayName;
-
-          for (const doc of matchesSnap.docs) {
-            const m = doc.data();
-            const mHome = m.homeTeam.name.toLowerCase();
-            const mAway = m.awayTeam.name.toLowerCase();
-            
-            if ((mHome === homeName || mHome.includes(homeName)) && 
-                (mAway === awayName || mAway.includes(awayName))) {
-              batch.update(doc.ref, {
-                homeScore: homeScore,
-                awayScore: awayScore,
-                isFinished: true
-              });
-              updates++;
-            }
-          }
-        }
-      }
-
-      if (updates > 0) {
-        await batch.commit();
-        console.log(`Synced ${updates} matches.`);
-      }
-    } catch (err) {
-      console.error("Error syncing matches:", err);
-    }
-    return null;
 });
 
