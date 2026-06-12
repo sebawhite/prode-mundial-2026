@@ -272,6 +272,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onNavigate }) => {
             <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
               {matches
                 .filter(m => m.stage === "groups")
+                .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
                 .map(m => {
                   const temp = tempScores[m.id] || { home: m.homeScore?.toString() || "", away: m.awayScore?.toString() || "" };
                   return (
